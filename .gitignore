@@ -302,7 +302,7 @@ dist
 ### Node Patch ###
 # Serverless Webpack directories
 .webpack/
-
+.venv/
 # Optional stylelint cache
 
 # SvelteKit build / generate output
