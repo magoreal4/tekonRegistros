@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% load static tailwind_filters crispy_forms_tags widget_tweaks %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto p-4 bg-red-100">
+    <img src="{% static 'img/logo.png' %}" alt="Logotipo" class="h-6 my-2">
+    <h2 class="text-center text-xl font-bold flex-grow">Registro de Inspección para Mandatos / Ingenieria</h2>
+
+    <form method="post" class="">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.sitio.label_tag }}
+            {{ form.sitio|add_class:"formulario-input" }}
+            {% if form.sitio.help_text %}
+                <small class="form-text text-muted">{{ form.sitio.help_text }}</small>
+            {% endif %}
+        </div>
+        <div class="text-left mt-4">
+            <button id="ubicar-btn" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
+                📍 Ubicar Centro Torre/Poste
+            </button>
+        </div>
+        <!-- Campos lat y lon con su estilo y ayuda -->
+        <div class="flex justify-between space-x-4">
+            <!-- Campo lat -->
+            <div class="form-group flex-1">
+                {{ form.lat.label_tag }}
+                {{ form.lat|add_class:"formulario-input" }}
+                {% if form.lat.help_text %}
+                    <small class="form-text text-muted">{{ form.lat.help_text }}</small>
+                {% endif %}
+            </div>
+            <!-- Campo lon -->
+            <div class="form-group flex-1">
+                {{ form.lon.label_tag }}
+                {{ form.lon|add_class:"formulario-input" }}
+                {% if form.lon.help_text %}
+                    <small class="form-text text-muted">{{ form.lon.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.dimensiones.label_tag }}
+            {{ form.dimensiones|add_class:"formulario-input" }}
+            {% if form.dimensiones.help_text %}
+                <small class="form-text text-muted">{{ form.dimensiones.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.deslindes.label_tag }}
+            {{ form.deslindes|add_class:"formulario-input" }}
+            {% if form.deslindes.help_text %}
+                <small class="form-text text-muted">{{ form.deslindes.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.accesoSitio.label_tag }}
+            {{ form.accesoSitio|add_class:"formulario-input" }}
+            {% if form.accesoSitio.help_text %}
+                <small class="form-text text-muted">{{ form.accesoSitio.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.accesoSitioConstruccion.label_tag }}
+            {{ form.accesoSitioConstruccion|add_class:"formulario-input" }}
+            {% if form.accesoSitioConstruccion.help_text %}
+                <small class="form-text text-muted">{{ form.accesoSitioConstruccion.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="flex justify-between space-x-4">
+            <div class="form-group flex-1">
+                {{ form.longitudAcceso.label_tag }}
+                {{ form.longitudAcceso|add_class:"formulario-input" }}
+                {% if form.longitudAcceso.help_text %}
+                    <small class="form-text text-muted">{{ form.longitudAcceso.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group flex-1">
+                {{ form.longitudAccesoConstuccion.label_tag }}
+                {{ form.longitudAccesoConstuccion|add_class:"formulario-input" }}
+                {% if form.longitudAccesoConstuccion.help_text %}
+                    <small class="form-text text-muted">{{ form.longitudAccesoConstuccion.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.tipoSuelo.label_tag }}
+            {{ form.tipoSuelo|add_class:"formulario-input" }}
+            {% if form.tipoSuelo.help_text %}
+                <small class="form-text text-muted">{{ form.tipoSuelo.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.obstaculos.label_tag }}
+            {{ form.obstaculos|add_class:"formulario-input" }}
+            {% if form.obstaculos.help_text %}
+                <small class="form-text text-muted">{{ form.obstaculos.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.adicionales.label_tag }}
+            {{ form.adicionales|add_class:"formulario-input" }}
+            {% if form.adicionales.help_text %}
+                <small class="form-text text-muted">{{ form.adicionales.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.proveedorEnergia.label_tag }}
+            {{ form.proveedorEnergia|add_class:"formulario-input" }}
+            {% if form.proveedorEnergia.help_text %}
+                <small class="form-text text-muted">{{ form.proveedorEnergia.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <div class="text-left mt-4">
+            <button id="ubicarEmpalme-btn" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
+                📍 Ubicar Empalme Definitivo
+            </button>
+        </div>
+
+        <div class="flex justify-between space-x-4">
+            <!-- Campo lat -->
+            <div class="form-group flex-1">
+                {{ form.latEnergia.label_tag }}
+                {{ form.latEnergia|add_class:"formulario-input" }}
+                {% if form.latEnergia.help_text %}
+                    <small class="form-text text-muted">{{ form.latEnergia.help_text }}</small>
+                {% endif %}
+            </div>
+            <!-- Campo lon -->
+            <div class="form-group flex-1">
+                {{ form.lonEnergia.label_tag }}
+                {{ form.lonEnergia|add_class:"formulario-input" }}
+                {% if form.lonEnergia.help_text %}
+                    <small class="form-text text-muted">{{ form.lonEnergia.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.capacidadEnergia.label_tag }}
+            {{ form.capacidadEnergia|add_class:"formulario-input" }}
+            {% if form.capacidadEnergia.help_text %}
+                <small class="form-text text-muted">{{ form.capacidadEnergia.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="w-full px-4 py-2 my-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
+            ENVIAR REPORTE
+        </button>
+    </form>
+    
+    
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script>
+        document.getElementById('ubicar-btn').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevenir la recarga de la página o la navegación
+        
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Obtiene las coordenadas con mayor precisión
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+        
+                    // Establece los valores de los campos lat y lon
+                    document.getElementById('id_lat').value = lat;
+                    document.getElementById('id_lon').value = lon;
+                }, function(error) {
+                    // Manejo de errores
+                    console.error("Error al obtener la ubicación: ", error);
+                    alert("Error al obtener la ubicación. Por favor, asegúrate de permitir el acceso a tu ubicación.");
+                }, {
+                    enableHighAccuracy: true, // Solicita una ubicación más precisa
+                    timeout: 10000, // Tiempo máximo en milisegundos para obtener la ubicación
+                    maximumAge: 0 // Acepta solo lecturas frescas de la ubicación, sin caché
+                });
+            } else {
+                alert("La geolocalización no está disponible en tu dispositivo.");
+            }
+        });
+        
+        document.getElementById('ubicarEmpalme-btn').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevenir la recarga de la página o la navegación
+        
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Obtiene las coordenadas con mayor precisión
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+        
+                    // Establece los valores de los campos lat y lon
+                    document.getElementById('id_latEnergia').value = lat;
+                    document.getElementById('id_lonEnergia').value = lon;
+                }, function(error) {
+                    // Manejo de errores
+                    console.error("Error al obtener la ubicación: ", error);
+                    alert("Error al obtener la ubicación. Por favor, asegúrate de permitir el acceso a tu ubicación.");
+                }, {
+                    enableHighAccuracy: true, // Solicita una ubicación más precisa
+                    timeout: 10000, // Tiempo máximo en milisegundos para obtener la ubicación
+                    maximumAge: 0 // Acepta solo lecturas frescas de la ubicación, sin caché
+                });
+            } else {
+                alert("La geolocalización no está disponible en tu dispositivo.");
+            }
+        });
+    </script>
+{% endblock extra_js %}
