@@ -23,10 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-e7+)+njyb7)9-*(um3!igm09)f2lr7hsiy)f(rm9m+l=-l#2(m"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -44,11 +40,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_tailwind",
     'tailwind',
-    'theme',
-    'django_browser_reload',
     'widget_tweaks',
     'import_export',
-    
 
 ]
 
