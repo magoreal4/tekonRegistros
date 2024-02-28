@@ -27,7 +27,7 @@ urlpatterns = [
 
 
 if settings.DEBUG:
-    urlpatterns += path("__reload__/", include("django_browser_reload.urls")),
+    # urlpatterns +=path("__reload__/", include("django_browser_reload.urls")),
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 

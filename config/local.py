@@ -20,7 +20,7 @@ INSTALLED_APPS += [
 
 MIDDLEWARE += [
     # "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]  # noqa: F405
 
 INTERNAL_IPS = [
