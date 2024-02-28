@@ -1,0 +1,20 @@
+{
+  "name": "formularios",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vite": "vite build --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.1.4"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "leaflet-control-custom": "^1.0.0"
+  }
+}

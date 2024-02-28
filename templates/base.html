@@ -8,6 +8,10 @@
     <title>{% block title %}{% endblock title %}</title>
 
     {% tailwind_css %}
+
+    {% block extra_css %}
+    {% endblock extra_css %}
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>

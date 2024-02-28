@@ -4,7 +4,26 @@
 
 {% block title %}Home{% endblock title %}
 
+{% block extra_css %}
+    {% comment %} <script src="{% static './js/Leaflet.AccuratePosition.js' %}"></script>  {% endcomment %}
+{% endblock extra_css %}
+
 {% block content %}
+<div id='overlay' class='invisible z-[10000] absolute top-0 bg-opacity-50 bg-black w-full h-screen'>
+</div>
+<div id='spinner'
+    class='invisible z-[10001] absolute top-0 flex items-center justify-center w-full h-screen'>
+    <svg role="status" class="inline mr-2 w-10 h-10 text-gray-200 animate-spin fill-primary" viewBox="0 0 100 100"
+        fill="none">
+        <path
+            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+            fill="currentColor" />
+        <path
+            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+            fill="currentFill" />
+    </svg>
+</div>
+
 <div class="container mx-auto p-4 bg-red-100">
     <img src="{% static 'img/logo.png' %}" alt="Logotipo" class="h-6 my-2">
     <h2 class="text-center text-xl font-bold flex-grow">Registro de Inspección para Mandatos / Ingenieria</h2>
@@ -19,7 +38,7 @@
             {% endif %}
         </div>
         <div class="text-left mt-4">
-            <button id="ubicar-btn" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
+            <button id="ubicar-btn" type="button" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
                 📍 Ubicar Centro Torre/Poste
             </button>
         </div>
@@ -126,7 +145,7 @@
         </div>
 
         <div class="text-left mt-4">
-            <button id="ubicarEmpalme-btn" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
+            <button id="ubicarEmpalme-btn" type="button" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
                 📍 Ubicar Empalme Definitivo
             </button>
         </div>
@@ -165,60 +184,32 @@
     
     
 </div>
+
+<!-- Modal structure -->
+<div id="mapModal" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center">
+    <!-- Modal content -->
+    <div class="relative mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <!-- Close button -->
+        <div class="flex justify-end items-center">
+            <button id="closeModal" class="text-black close-modal">&times;</button>
+        </div>
+        <!-- Leaflet map container -->
+        <div id="map" class="relative w-full" style="height: 60vh;"> <!-- Ajusta la altura según necesites -->
+        </div>
+        <div class="text-center mt-4">
+            <button id="confirmarUbicacion-btn" class="px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
+                Confirmar ubicacion
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
 {% endblock content %}
 
 {% block extra_js %}
-    <script>
-        document.getElementById('ubicar-btn').addEventListener('click', function(e) {
-            e.preventDefault(); // Prevenir la recarga de la página o la navegación
-        
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    // Obtiene las coordenadas con mayor precisión
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-        
-                    // Establece los valores de los campos lat y lon
-                    document.getElementById('id_lat').value = lat;
-                    document.getElementById('id_lon').value = lon;
-                }, function(error) {
-                    // Manejo de errores
-                    console.error("Error al obtener la ubicación: ", error);
-                    alert("Error al obtener la ubicación. Por favor, asegúrate de permitir el acceso a tu ubicación.");
-                }, {
-                    enableHighAccuracy: true, // Solicita una ubicación más precisa
-                    timeout: 10000, // Tiempo máximo en milisegundos para obtener la ubicación
-                    maximumAge: 0 // Acepta solo lecturas frescas de la ubicación, sin caché
-                });
-            } else {
-                alert("La geolocalización no está disponible en tu dispositivo.");
-            }
-        });
-        
-        document.getElementById('ubicarEmpalme-btn').addEventListener('click', function(e) {
-            e.preventDefault(); // Prevenir la recarga de la página o la navegación
-        
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    // Obtiene las coordenadas con mayor precisión
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-        
-                    // Establece los valores de los campos lat y lon
-                    document.getElementById('id_latEnergia').value = lat;
-                    document.getElementById('id_lonEnergia').value = lon;
-                }, function(error) {
-                    // Manejo de errores
-                    console.error("Error al obtener la ubicación: ", error);
-                    alert("Error al obtener la ubicación. Por favor, asegúrate de permitir el acceso a tu ubicación.");
-                }, {
-                    enableHighAccuracy: true, // Solicita una ubicación más precisa
-                    timeout: 10000, // Tiempo máximo en milisegundos para obtener la ubicación
-                    maximumAge: 0 // Acepta solo lecturas frescas de la ubicación, sin caché
-                });
-            } else {
-                alert("La geolocalización no está disponible en tu dispositivo.");
-            }
-        });
-    </script>
+
+    <script type="text/javascript" src="{% static './js/formularios.js' %}"></script>
+
 {% endblock extra_js %}
