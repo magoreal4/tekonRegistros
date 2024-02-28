@@ -24,7 +24,7 @@ class Formulario1Resource(resources.ModelResource):
     aSitio = fields.Field(column_name='Acceso al Sitio', attribute='accesoSitio')
     aSitioCons = fields.Field(column_name='Acceso para Construcción', attribute='accesoSitioConstruccion')
     lAcceso = fields.Field(column_name='Longitud Acceso', attribute='longitudAcceso')
-    lAccesoCons = fields.Field(column_name='Longitud Acceso Construcción', attribute='longitudAccesoConstruccion')
+    lAccesoCons = fields.Field(column_name='Longitud Acceso Construcción', attribute='longitudAccesoConstuccion')
     tSuelo = fields.Field(column_name='Tipo de Suelo', attribute='tipoSuelo')
     obst = fields.Field(column_name='Obstáculos', attribute='obstaculos')
     adi = fields.Field(column_name='Adicionales', attribute='adicionales')
