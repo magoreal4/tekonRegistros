@@ -13,7 +13,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 INSTALLED_APPS += [
     # "django_extensions",
-    'django_browser_reload',
+    # 'django_browser_reload',
     'theme',
     # "debug_toolbar",
     ]  # noqa: F405
