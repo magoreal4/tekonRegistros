@@ -13,14 +13,14 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 INSTALLED_APPS += [
     # "django_extensions",
-    'django_browser_reload',
+    # 'django_browser_reload',
     'theme',
     # "debug_toolbar",
     ]  # noqa: F405
 
 MIDDLEWARE += [
     # "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]  # noqa: F405
 
 INTERNAL_IPS = [
