@@ -191,8 +191,8 @@ class FormularioPreIngResource(resources.ModelResource):
     lonE = fields.Field(column_name='Longitud Empalme', attribute='lon_energia')
     dist_empalme_inspeccion = fields.Field(column_name='Distancia al Empalme', attribute='distanciaEmpalmeSitio')
     
-    lat_M = fields.Field(column_name='Latitud Nominal', attribute='lat_mandato')
-    lon_M = fields.Field(column_name='Longitud Nominal', attribute='lon_mandato')
+    lat_M = fields.Field(column_name='Latitud Mandato', attribute='lat_mandato')
+    lon_M = fields.Field(column_name='Longitud Mandato', attribute='lon_mandato')
 
     dist_mandato_ingenieria = fields.Field(column_name='Distancia Mandato a Ingenieria', attribute='dist_mandato_ingenieria')
    
