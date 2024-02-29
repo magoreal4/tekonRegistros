@@ -9,3 +9,17 @@
 #map {
     height: 80vh; /* Ajusta esto a tus necesidades */
 }
+
+/* Ajustar la velocidad de animación */
+@keyframes spin-fast {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .spinner-fast {
+    animation: spin-fast 0.5s linear infinite;
+  }

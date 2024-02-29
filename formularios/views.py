@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required  # Importa el decorador
-from .forms import Formulario1Form
+from .forms import FormularioTXForm, FormularioPreIngForm
+from .models import Sitio
 
 
 @login_required  # Asegura que solo usuarios logueados puedan acceder a esta vista
-def formulario1_view(request):
+def formularioTX_view(request):
     if request.method == 'POST':
-        form = Formulario1Form(request.POST)
+        form = FormularioTXForm(request.POST)
         if form.is_valid():
             # Crea una instancia del modelo, pero no la guarda todavía
             instancia = form.save(commit=False)
@@ -18,8 +19,31 @@ def formulario1_view(request):
             # form.save_m2m()
             return redirect('formularios:success')  # Redirige a una nueva URL en caso de éxito
     else:
-        form = Formulario1Form()
-    return render(request, 'formularios/formulario1.html', {'form': form})
+        form = FormularioTXForm()
+        sitios_info = {sitio.id: sitio.Nombre for sitio in Sitio.objects.all()}
+        return render(request, 'formularios/formularioTX.html', {'form': form, 'sitios_info': sitios_info})
+
+
+@login_required  # Asegura que solo usuarios logueados puedan acceder a esta vista
+def formularioPreIng_view(request):
+    if request.method == 'POST':
+        form = FormularioPreIngForm(request.POST)
+        if form.is_valid():
+            # Crea una instancia del modelo, pero no la guarda todavía
+            instancia = form.save(commit=False)
+            # Asigna el usuario logueado a la instancia del modelo
+            instancia.usuario = request.user
+            # Ahora guarda la instancia del modelo en la base de datos
+            instancia.save()
+            # Si tu formulario tiene relaciones ManyToMany que necesiten guardarse, puedes hacerlo aquí:
+            # form.save_m2m()
+            return redirect('formularios:success')  # Redirige a una nueva URL en caso de éxito
+    else:
+        form = FormularioPreIngForm()
+        sitios_info = {sitio.id: sitio.Nombre for sitio in Sitio.objects.all()}
+        return render(request, 'formularios/formularioPreIng.html', {'form': form, 'sitios_info': sitios_info})
+
+
 
 # Añade esta nueva vista
 def form_success(request):

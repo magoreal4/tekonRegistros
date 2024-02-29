@@ -6,6 +6,7 @@ from django.views.generic.base import RedirectView
 app_name = 'formularios'
 
 urlpatterns = [
-    path("form1/", views.formulario1_view, name="form1"),
+    path("formTX/", views.formularioTX_view, name="formularioTX"),
+    path("formPreIng/", views.formularioPreIng_view, name="formularioPreIngenieria"),
     path("success/", views.form_success, name="success"),
 ]

@@ -147,15 +147,17 @@ L.control.layers(baseMaps).addTo(map);
 
     document.getElementById('confirmarUbicacion-btn').addEventListener('click', function () {
         if (tipoBoton == "ubicar") {
-            document.getElementById('id_lat').value = marker.getLatLng().lat.toFixed(7);
-            document.getElementById('id_lon').value = marker.getLatLng().lng.toFixed(7);
+            document.getElementById('lat').value = marker.getLatLng().lat.toFixed(7);
+            document.getElementById('lon').value = marker.getLatLng().lng.toFixed(7);
         } else if (tipoBoton == "ubicarEmpalme") {
-            document.getElementById('id_latEnergia').value = marker.getLatLng().lat.toFixed(7);
-            document.getElementById('id_lonEnergia').value = marker.getLatLng().lng.toFixed(7);
+            document.getElementById('id_lat_energia').value = marker.getLatLng().lat.toFixed(7);
+            document.getElementById('id_lon_energia').value = marker.getLatLng().lng.toFixed(7);
         }
         document.getElementById('mapModal').classList.add('hidden');
     });
 
     
+
+
 
 });

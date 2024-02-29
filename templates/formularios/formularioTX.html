@@ -2,19 +2,18 @@
 
 {% load static tailwind_filters crispy_forms_tags widget_tweaks %}
 
-{% block title %}Home{% endblock title %}
+{% block title %}TX{% endblock title %}
 
 {% block extra_css %}
     {% comment %} <script src="{% static './js/Leaflet.AccuratePosition.js' %}"></script>  {% endcomment %}
 {% endblock extra_css %}
 
 {% block content %}
-<div id='overlay' class='invisible z-[10000] absolute top-0 bg-opacity-50 bg-black w-full h-screen'>
+<div id='overlay' class='invisible z-[10000] fixed top-0 left-0 bg-opacity-50 bg-black w-full h-full'>
 </div>
 <div id='spinner'
-    class='invisible z-[10001] absolute top-0 flex items-center justify-center w-full h-screen'>
-    <svg role="status" class="inline mr-2 w-10 h-10 text-gray-200 animate-spin fill-primary" viewBox="0 0 100 100"
-        fill="none">
+    class='invisible z-[10001] fixed top-0 left-0 flex items-center justify-center w-full h-full'>
+    <svg role="status" class="inline mr-2 w-10 h-10 text-gray-200 animate-spin-slow fill-primary" viewBox="0 0 100 100" fill="none">
         <path
             d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
             fill="currentColor" />
@@ -24,9 +23,11 @@
     </svg>
 </div>
 
+
 <div class="container mx-auto p-4 bg-red-100">
     <img src="{% static 'img/logo.png' %}" alt="Logotipo" class="h-6 my-2">
-    <h2 class="text-center text-xl font-bold flex-grow">Registro de Inspección para Mandatos / Ingenieria</h2>
+    <h2 class="text-center text-xl font-bold flex-grow">Registro de Inspección TX / TSS
+    </h2>
 
     <form method="post" class="">
         {% csrf_token %}
@@ -37,25 +38,37 @@
                 <small class="form-text text-muted">{{ form.sitio.help_text }}</small>
             {% endif %}
         </div>
+        <div id="info-adicional-sitio">Información del sitio aparecerá aquí...</div>
         <div class="text-left mt-4">
             <button id="ubicar-btn" type="button" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
                 📍 Ubicar Centro Torre/Poste
             </button>
         </div>
-        <!-- Campos lat y lon con su estilo y ayuda -->
         <div class="flex justify-between space-x-4">
-            <!-- Campo lat -->
-            <div class="form-group flex-1">
+            <!-- Campo lat con botón -->
+            <div class="form-group flex-1 relative">
                 {{ form.lat.label_tag }}
-                {{ form.lat|add_class:"formulario-input" }}
+                <div class="flex">
+                    {{ form.lat|add_class:"formulario-input w-full"|attr:"id:lat" }}
+                    <!-- Botón para abrir modal, al lado del campo lat -->
+                    <button type="button" onclick="openModal('lat')" class="w-24 ml-0 bg-blue-500 hover:bg-blue-700 text-white font-bold p-0 rounded">
+                        ° ′ ″
+                    </button>
+                </div>
                 {% if form.lat.help_text %}
                     <small class="form-text text-muted">{{ form.lat.help_text }}</small>
                 {% endif %}
             </div>
-            <!-- Campo lon -->
-            <div class="form-group flex-1">
+            <!-- Campo lon con botón -->
+            <div class="form-group flex-1 relative">
                 {{ form.lon.label_tag }}
-                {{ form.lon|add_class:"formulario-input" }}
+                <div class="flex">
+                    {{ form.lon|add_class:"formulario-input w-full"|attr:"id:lon" }}
+                    <!-- Botón para abrir modal, al lado del campo lon -->
+                    <button type="button" onclick="openModal('lon')" class="w-24 ml-0 bg-blue-500 hover:bg-blue-700 text-white font-bold -py-1 px-0 rounded">
+                        ° ′ ″
+                    </button>
+                </div>
                 {% if form.lon.help_text %}
                     <small class="form-text text-muted">{{ form.lon.help_text }}</small>
                 {% endif %}
@@ -151,20 +164,32 @@
         </div>
 
         <div class="flex justify-between space-x-4">
-            <!-- Campo lat -->
-            <div class="form-group flex-1">
-                {{ form.latEnergia.label_tag }}
-                {{ form.latEnergia|add_class:"formulario-input" }}
-                {% if form.latEnergia.help_text %}
-                    <small class="form-text text-muted">{{ form.latEnergia.help_text }}</small>
+            <!-- Campo lat con botón -->
+            <div class="form-group flex-1 relative">
+                {{ form.lat_energia.label_tag }}
+                <div class="flex">
+                    {{ form.lat_energia|add_class:"formulario-input w-full" }}
+                    <!-- Botón para abrir modal, al lado del campo lat -->
+                    <button type="button" onclick="openModal('id_lat_energia')" class="w-24 ml-0 bg-blue-500 hover:bg-blue-700 text-white font-bold p-0 rounded">
+                        ° ′ ″
+                    </button>
+                </div>
+                {% if form.lat_energia.help_text %}
+                    <small class="form-text text-muted">{{ form.lat_energia.help_text }}</small>
                 {% endif %}
             </div>
-            <!-- Campo lon -->
-            <div class="form-group flex-1">
-                {{ form.lonEnergia.label_tag }}
-                {{ form.lonEnergia|add_class:"formulario-input" }}
-                {% if form.lonEnergia.help_text %}
-                    <small class="form-text text-muted">{{ form.lonEnergia.help_text }}</small>
+            <!-- Campo lon con botón -->
+            <div class="form-group flex-1 relative">
+                {{ form.lon_energia.label_tag }}
+                <div class="flex">
+                    {{ form.lon_energia|add_class:"formulario-input w-full" }}
+                    <!-- Botón para abrir modal, al lado del campo lon -->
+                    <button type="button" onclick="openModal('id_lon_energia')" class="w-24 ml-0 bg-blue-500 hover:bg-blue-700 text-white font-bold -py-1 px-0 rounded">
+                        ° ′ ″
+                    </button>
+                </div>
+                {% if form.lon_energia.help_text %}
+                    <small class="form-text text-muted">{{ form.lon_energia.help_text }}</small>
                 {% endif %}
             </div>
         </div>
@@ -185,7 +210,7 @@
     
 </div>
 
-<!-- Modal structure -->
+<!-- Modal MApa -->
 <div id="mapModal" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center">
     <!-- Modal content -->
     <div class="relative mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
@@ -204,12 +229,94 @@
     </div>
 </div>
 
-
+<!-- Modal -->
+<div id="modal-lat-lon" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white rounded-lg p-5">
+      <div class="flex justify-between items-center">
+        <h2 class="text-lg">Introducir coordenadas</h2>
+        <button onclick="closeModal()" class="text-black">&times;</button>
+      </div>
+      <form id="coords-form" class="space-y-4">
+        <div>
+          <label for="degrees" class="block text-sm font-medium text-gray-700">Grados</label>
+          <input type="number" id="degrees" name="degrees" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Numero Negativo Chile">
+        </div>
+        <div>
+          <label for="minutes" class="block text-sm font-medium text-gray-700">Minutos</label>
+          <input type="number" id="minutes" name="minutes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+        </div>
+        <div>
+          <label for="seconds" class="block text-sm font-medium text-gray-700">Segundos</label>
+          <input type="number" id="seconds" name="seconds" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+        </div>
+        <div class="flex justify-end">
+          <button type="button" onclick="calculateAndCloseModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Aceptar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
 
 {% endblock content %}
 
 {% block extra_js %}
+<script>
+    var sitiosInfo = {{ sitios_info|safe }};
+    </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectSitio = document.getElementById('id_sitio'); // Asegúrate de usar el ID correcto
+            selectSitio.addEventListener('change', function() {
+                var sitioId = this.value;
+                var infoAdicional = sitiosInfo[sitioId] || 'Información no disponible';
+                document.getElementById('info-adicional-sitio').innerText = infoAdicional;
+            });
+        });
+     </script>
+        
+    
     <script type="text/javascript" src="{% static './js/formularios.js' %}"></script>
+  <script>
+    // Modal para convertir grados minutos y segundo e grados decimales
 
+            // Función para abrir el modal
+            function openModal(fieldId) {
+                document.getElementById('modal-lat-lon').classList.remove('hidden');
+                document.getElementById('coords-form').dataset.fieldId = fieldId; // Guarda el ID del campo que activó el modal
+              }
+              
+              // Función para cerrar el modal
+              function closeModal() {
+                document.getElementById('modal-lat-lon').classList.add('hidden');
+                document.getElementById('degrees').value = '';
+                document.getElementById('minutes').value = '';
+                document.getElementById('seconds').value = '';
+              }
+              
+              // Función para calcular y cerrar el modal
+              function calculateAndCloseModal() {
+                const form = document.getElementById('coords-form');
+                const fieldId = form.dataset.fieldId; // Recupera el ID del campo que activó el modal
+                const degrees = parseFloat(document.getElementById('degrees').value) || 0;
+                const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+                const seconds = parseFloat(document.getElementById('seconds').value) || 0;
+              
+                // Convierte a grados con 7 decimales
+                const totalDegrees = degrees + (minutes / 60) + (seconds / 3600);
+              
+                // Solo asigna el valor si el resultado no es cero
+                if (totalDegrees !== 0) {
+                  document.getElementById(fieldId).value = totalDegrees.toFixed(7);
+                } 
+              
+                closeModal(); // Cierra el modal
+              }
+
+
+
+    </script>
+        
 {% endblock extra_js %}
