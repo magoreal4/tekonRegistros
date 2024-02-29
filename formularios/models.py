@@ -57,6 +57,11 @@ class FormularioTX(models.Model):
     dist_nominal_inmobiliaria = models.IntegerField(blank=True, null=True)
     dist_nominal_inspeccion = models.IntegerField(blank=True, null=True)
     dist_inmobiliaria_inspeccion = models.IntegerField(blank=True, null=True)
+    
+    comentario = models.TextField(default="Sin comentarios", null=True, blank=True)
+    
+    def __str__(self):
+        return self.entel_id
 
     def calcular_distancia_geopy(self, lat_1, lon_1, lat_2, lon_2):
         """Calcula la distancia entre dos puntos usando geopy."""
@@ -123,6 +128,8 @@ class FormularioPreIng(models.Model):
     lon_mandato = models.FloatField(max_length=10, blank=True, null=True)
     
     dist_mandato_ingenieria = models.IntegerField(blank=True, null=True)
+    
+    comentario = models.TextField(default="Sin comentarios", null=True, blank=True)
 
     def calcular_distancia_geopy(self, lat_1, lon_1, lat_2, lon_2):
         """Calcula la distancia entre dos puntos usando geopy."""

@@ -202,6 +202,14 @@
             {% endif %}
         </div>
 
+        <div class="form-group">
+            {{ form.comentario.label_tag }}
+            {{ form.comentario|add_class:"formulario-input" }}
+            {% if form.comentario.help_text %}
+                <small class="form-text text-muted">{{ form.comentario.help_text }}</small>
+            {% endif %}
+        </div>
+
         <button type="submit" class="w-full px-4 py-2 my-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
             ENVIAR REPORTE
         </button>

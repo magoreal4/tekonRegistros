@@ -22,7 +22,8 @@ class FormularioTXForm(forms.ModelForm):
                   'proveedorEnergia',
                   'lat_energia', 
                   'lon_energia',
-                  'capacidadEnergia', 
+                  'capacidadEnergia',
+                  'comentario', 
                   ]
 
     def __init__(self, *args, **kwargs):
@@ -71,7 +72,7 @@ class FormularioTXForm(forms.ModelForm):
         self.fields['lat_energia'].help_text = 'Ubiquese en el punto de empalme y presione el boton de arriba.'
         self.fields['lon_energia'].widget.attrs.update({'placeholder': 'Ej: -70.123456'})
         self.fields['capacidadEnergia'].widget.attrs.update({'placeholder': 'Ej: 25 A'})
-        
+        self.fields['comentario'].widget.attrs.update({'rows': '3'})        
 
 
 class FormularioPreIngForm(forms.ModelForm):
@@ -95,7 +96,8 @@ class FormularioPreIngForm(forms.ModelForm):
                   'proveedorEnergia',
                   'lat_energia', 
                   'lon_energia',
-                  'capacidadEnergia', 
+                  'capacidadEnergia',
+                  'comentario', 
                   ]
 
     def __init__(self, *args, **kwargs):
@@ -144,3 +146,4 @@ class FormularioPreIngForm(forms.ModelForm):
         self.fields['lat_energia'].help_text = 'Ubiquese en el punto de empalme y presione el boton de arriba.'
         self.fields['lon_energia'].widget.attrs.update({'placeholder': 'Ej: -70.123456'})
         self.fields['capacidadEnergia'].widget.attrs.update({'placeholder': 'Ej: 25 A'})
+        self.fields['comentario'].widget.attrs.update({'rows': '3'})        

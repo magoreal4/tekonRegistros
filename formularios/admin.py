@@ -108,6 +108,8 @@ class FormularioTXResource(resources.ModelResource):
     dist_nominal_inspeccion = fields.Field(column_name='Distancia Nominal a Inspeccion', attribute='dist_nominal_inspeccion')
     dist_inmobiliaria_inspeccion = fields.Field(column_name='Distancia Inmobiliaria a Inspeccion', attribute='dist_inmobiliaria_inspeccion')
     
+    comentarios = fields.Field(column_name='Comentarios', attribute='comentario')
+    
     class Meta:
         model = FormularioTX
         fields = ()
@@ -141,6 +143,7 @@ class FormularioTXResource(resources.ModelResource):
             'dist_nominal_inmobiliaria',
             'dist_nominal_inspeccion',
             'dist_inmobiliaria_inspeccion',
+            'comentarios'
         )
         import_id_fields = ('entel_id',)
         
@@ -196,6 +199,8 @@ class FormularioPreIngResource(resources.ModelResource):
 
     dist_mandato_ingenieria = fields.Field(column_name='Distancia Mandato a Ingenieria', attribute='dist_mandato_ingenieria')
    
+    comentarios = fields.Field(column_name='Comentarios', attribute='comentario')
+ 
     class Meta:
         model = FormularioPreIng
         fields = ()
@@ -225,6 +230,7 @@ class FormularioPreIngResource(resources.ModelResource):
             'lat_M', 
             'lon_M', 
             'dist_mandato_ingenieria',
+            'comentarios'
         )
         import_id_fields = ('entel_id',)
         
