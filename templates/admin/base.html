@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+
+{% block welcome-msg %}
+    {{ user.get_username }}
+{% endblock %}
+
+{% block title %}Mi título personalizado{% endblock %}
+
+{% block content_title %}
+{% comment %} Se elimina el titulo que era Change ..... {% endcomment %}
+  {% comment %} <h1>Mi título personalizado para el contenido</h1> {% endcomment %}
+{% endblock %}
