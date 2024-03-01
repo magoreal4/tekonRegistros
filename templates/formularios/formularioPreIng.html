@@ -247,7 +247,7 @@
       <form id="coords-form" class="space-y-4">
         <div>
           <label for="degrees" class="block text-sm font-medium text-gray-700">Grados</label>
-          <input type="number" id="degrees" name="degrees" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Numero Negativo Chile">
+          <input type="number" id="degrees" name="degrees" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
         </div>
         <div>
           <label for="minutes" class="block text-sm font-medium text-gray-700">Minutos</label>
@@ -313,7 +313,7 @@
                 const seconds = parseFloat(document.getElementById('seconds').value) || 0;
               
                 // Convierte a grados con 7 decimales
-                const totalDegrees = degrees + (minutes / 60) + (seconds / 3600);
+                const totalDegrees = -(degrees + (minutes / 60) + (seconds / 3600));
               
                 // Solo asigna el valor si el resultado no es cero
                 if (totalDegrees !== 0) {
