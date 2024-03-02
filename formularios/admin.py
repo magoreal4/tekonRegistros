@@ -51,7 +51,8 @@ class SitiosResource(resources.ModelResource):
             'lat_inmobiliaria',
             'lon_inmobiliaria',
             'lat_mandato',
-            'lon_mandato'
+            'lon_mandato',
+            'altura',
         )
         import_id_fields = ('entel_id',)
 
@@ -62,16 +63,10 @@ class SitioAdmin(ImportExportModelAdmin):
         'PTICellID',
         'EntelID',
         'nombre_modificado',
-        'lat_inmobiliaria',
-        'lon_inmobiliaria',
-        'lat_mandato',
-        'lon_mandato',
+        'altura',
     )
     list_editable = (
-        'lat_inmobiliaria',
-        'lon_inmobiliaria',
-        'lat_mandato',
-        'lon_mandato',
+        'altura',
     )
     def nombre_modificado(self, obj):
         """
@@ -114,13 +109,14 @@ class FormularioTXResource(resources.ModelResource):
     lonE = fields.Field(column_name='Longitud Empalme', attribute='lon_energia')
     dist_empalme_inspeccion = fields.Field(column_name='Distancia al Empalme', attribute='distanciaEmpalmeSitio')
 
-
     lat_I = fields.Field(column_name='Latitud Inmobiliaria', attribute='lat_inmobiliaria')
     lon_I = fields.Field(column_name='Longitud Inmobiliaria', attribute='lon_inmobiliaria')
 
     dist_inmobiliaria_inspeccion = fields.Field(column_name='Distancia Inmobiliaria a Inspeccion', attribute='dist_inmobiliaria_inspeccion')
 
     comentarios = fields.Field(column_name='Comentarios', attribute='comentario')
+    
+    fecha_creacion = fields.Field(column_name='Fecha Creación', attribute='fecha_creacion')
 
     class Meta:
         model = FormularioTX
@@ -132,6 +128,7 @@ class FormularioTXResource(resources.ModelResource):
             'comuna',
             'provincia',
             'usuario',
+            'altura',
             'dim',
             'des',
             'aSitio',
@@ -151,7 +148,8 @@ class FormularioTXResource(resources.ModelResource):
             'lat_I',
             'lon_I',
             'dist_inmobiliaria_inspeccion',
-            'comentarios'
+            'comentarios',
+            'fecha_creacion',
         )
         import_id_fields = ('entel_id',)
 
@@ -179,6 +177,10 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         'lat_energia_gms',
         'lon_energia_gms',
         'imagen_deslindes_display',
+        'entel_id',
+        'nombre',
+        'comuna',
+        'provincia',
         )
 
     def imagen_thumb(self, obj):
@@ -225,7 +227,14 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         # Ajustando la disposición de los campos usando fieldsets
     fieldsets = (
         ('Información General', {  # Ajusta los títulos y campos según necesites
-            'fields': ('sitio', 'entel_id', 'usuario', 'nombre', 'comuna', 'provincia',),
+            'fields': (
+                'sitio',
+                'entel_id', 
+                'nombre', 
+                'comuna', 
+                'provincia',
+                'altura', 
+                ),
         }),
         ('Datos Geograficos', {  # Este es el título de la sección
             'fields': (
@@ -257,6 +266,12 @@ class FormularioTXAdmin(ImportExportModelAdmin):
                 'adicionales',
                 'proveedorEnergia',
                 'imagen'
+                ),
+        }),
+        ('Registro', {  # Este es el título de la sección
+            'fields': (
+                'fecha_creacion',
+                'usuario', 
                 ),
         }),
 
@@ -300,6 +315,9 @@ class FormularioPreIngResource(resources.ModelResource):
 
     comentarios = fields.Field(column_name='Comentarios', attribute='comentario')
 
+   
+    fecha_creacion = fields.Field(column_name='Fecha Creación', attribute='fecha_creacion')
+
     class Meta:
         model = FormularioPreIng
         fields = ()
@@ -311,6 +329,7 @@ class FormularioPreIngResource(resources.ModelResource):
             'comuna',
             'provincia',
             'usuario',
+            'altura',
             'dim',
             'des',
             'aSitio',
@@ -330,7 +349,8 @@ class FormularioPreIngResource(resources.ModelResource):
             'lat_M',
             'lon_M',
             'dist_mandato_ingenieria',
-            'comentarios'
+            'comentarios',
+            'fecha_creacion',
         )
         import_id_fields = ('entel_id',)
 
@@ -347,8 +367,6 @@ class FormularioPreIngAdmin(ImportExportModelAdmin):
         'distanciaEmpalmeSitio',
         'dist_mandato_ingenieria',
         'imagen',
-        
-
     )
 
     readonly_fields = (
@@ -360,6 +378,10 @@ class FormularioPreIngAdmin(ImportExportModelAdmin):
         'lat_energia_gms',
         'lon_energia_gms',
         'imagen_deslindes_display',
+        'entel_id',
+        'nombre',
+        'comuna',
+        'provincia',
         
         )
 
@@ -407,8 +429,14 @@ class FormularioPreIngAdmin(ImportExportModelAdmin):
         # Ajustando la disposición de los campos usando fieldsets
     fieldsets = (
         ('Información General', {  # Ajusta los títulos y campos según necesites
-            'fields': ('sitio', 'entel_id', 'usuario', 'nombre', 'comuna', 'provincia',),
-        }),
+             'fields': (
+                'sitio',
+                'entel_id', 
+                'nombre', 
+                'comuna', 
+                'provincia',
+                'altura', 
+                ),        }),
         ('Datos Geograficos', {  # Este es el título de la sección
             'fields': (
                 'imagen_thumb',
@@ -439,6 +467,12 @@ class FormularioPreIngAdmin(ImportExportModelAdmin):
                 'adicionales',
                 'proveedorEnergia',
                 'imagen'
+                ),
+        }),
+        ('Registro', {  # Este es el título de la sección
+            'fields': (
+                'fecha_creacion',
+                'usuario', 
                 ),
         }),
 

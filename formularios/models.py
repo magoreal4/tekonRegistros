@@ -4,8 +4,8 @@ from geopy.distance import geodesic
 from django.contrib.auth.models import User
 import requests
 from django.core.files.base import ContentFile
-from django.utils.html import format_html
 from main.models import Image
+from django.utils import timezone
 
 def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, zoom=18, maptype="hybrid", scale=2, tamano="640x400"):
     base_url = "https://maps.googleapis.com/maps/api/staticmap?"
@@ -53,8 +53,9 @@ class Sitio(models.Model):
     Provincia = models.CharField(max_length=50, blank=True)
     lat_inmobiliaria = models.FloatField(max_length=10, blank=True, null=True)
     lon_inmobiliaria = models.FloatField(max_length=10, blank=True, null=True)
-    lat_mandato = models.FloatField(max_length=10, blank=True, null=True)
-    lon_mandato = models.FloatField(max_length=10, blank=True, null=True)
+    lat_mandato = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Mandato/Inmobiliaria')
+    lon_mandato = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Mandato/Inmobiliaria')
+    altura = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.PTICellID
@@ -97,6 +98,10 @@ class FormularioTX(models.Model):
     
     imagen = models.ImageField(upload_to='imagenes_mapas/', null=True, blank=True)
     
+    altura = models.IntegerField(blank=True, null=True)
+    
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+    
     def imagen_deslindes(self):
         # Obtén la instancia de Image
         imagen_instance = Image.load()
@@ -123,8 +128,6 @@ class FormularioTX(models.Model):
             self.nombre = self.sitio.Nombre
             self.comuna = self.sitio.Comuna
             self.provincia = self.sitio.Provincia
-            self.lat_inmobiliaria = self.sitio.lat_inmobiliaria
-            self.lon_inmobiliaria = self.sitio.lon_inmobiliaria
             
             # Calcular las distancias usando geopy antes de guardar
             self.distanciaEmpalmeSitio = self.calcular_distancia_geopy(self.lat, self.lon, self.lat_energia, self.lon_energia)
@@ -180,6 +183,10 @@ class FormularioPreIng(models.Model):
     
     imagen = models.ImageField(upload_to='imagenes_mapas/', null=True, blank=True)
     
+    altura = models.IntegerField(blank=True, null=True)
+    
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+    
     def imagen_deslindes(self):
         # Obtén la instancia de Image
         imagen_instance = Image.load()
@@ -205,8 +212,6 @@ class FormularioPreIng(models.Model):
             self.nombre = self.sitio.Nombre
             self.comuna = self.sitio.Comuna
             self.provincia = self.sitio.Provincia
-            self.lat_mandato = self.sitio.lat_mandato
-            self.lon_mandato = self.sitio.lon_mandato
             
             # Calcular las distancias usando geopy antes de guardar
             self.distanciaEmpalmeSitio = self.calcular_distancia_geopy(self.lat, self.lon, self.lat_energia, self.lon_energia)
