@@ -1,11 +1,19 @@
 {% extends "admin/base.html" %}
-
+{% load static %}
 {% block title %}Tekon RL{% endblock %}
 
 {% block userlinks %}
     {# Contenido original que quieres ocultar #}
 {% endblock %}
 
+{% block extrastyle %}
+<style>
+    .form-row {
+        border-bottom: none !important; /* Elimina las líneas horizontales */
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="{% static 'css/custom_admin.css' %}">
+{% endblock %}
 
 {% block branding %}
 <h1 id="site-name"><a href="{% url 'admin:index' %}">TEKON RL</a></h1>

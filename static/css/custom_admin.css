@@ -1,0 +1,35 @@
+/* static/css/custom_admin_style.css */
+/** Estilos generales para el fondo y el texto
+body label{
+    background-color: #f7f7f7 !important; 
+    color: #333 !important; 
+}
+
+#header, .module caption, .dashboard-header,.module, input, select, .colM, textarea, .submit-row, .toggle-nav-sidebar, .breadcrumbs {
+    background-color: #fff !important;
+    color: #333 !important;
+}
+
+
+a {
+    color: #0056b3 !important;
+}
+
+
+button, input[type="submit"], .button {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+
+th {
+    background-color: #f2f2f2 !important;
+}
+/* static/css/custom_admin.css */
+.change-form .form-row {
+    margin-bottom: 0px !important; /* Reducir el margen inferior */
+}
+
+.field-box {
+    padding: 2px 0px !important; /* Ajustar el relleno */
+}

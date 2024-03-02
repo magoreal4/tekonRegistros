@@ -2,6 +2,42 @@ from django.db import models
 from .validators import validar_longitud_sitio, validar_latitud, validar_longitud
 from geopy.distance import geodesic
 from django.contrib.auth.models import User
+import requests
+from django.core.files.base import ContentFile
+from django.utils.html import format_html
+from main.models import Image
+
+def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, zoom=19, maptype="hybrid", scale=2, tamano="640x400"):
+    base_url = "https://maps.googleapis.com/maps/api/staticmap?"
+    api_key = "AIzaSyD22EmbDEXIc7Meum5e2MCYj4D0JpDrmpU"
+
+    # Omitir la etiqueta resulta en un punto sin letra dentro.
+    markers = [
+        f"size:mid|color:0x00FF00|label:M|{lat_mandato},{lon_mandato}",  # Primer marcador en verde usando hexadecimal
+        f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}", 
+    ]
+
+    # print(imagen_content)
+    params = {
+        "center": f"{latitud},{longitud}",
+        "zoom": zoom,
+        "size": tamano,
+        "maptype": maptype,  # "roadmap" Agrega este parámetro para obtener imágenes satelitales
+        "scale" : scale,
+        "key": api_key,
+        "markers": markers,  # Agrega un marcador rojo con la etiqueta 'A'
+    }
+    
+    response = requests.get(base_url, params=params)
+    print("-----------------------------------")
+    print(response)
+    
+    if response.status_code == 200:
+
+        return response.content
+    else:
+        return None
+
 
 class Sitio(models.Model):
     PTICellID = models.CharField(max_length=100)
@@ -9,8 +45,6 @@ class Sitio(models.Model):
     Nombre = models.CharField(max_length=100, blank=True)
     Comuna = models.CharField(max_length=20, blank=True)
     Provincia = models.CharField(max_length=50, blank=True)
-    lat_nominal = models.FloatField(max_length=10, blank=True, null=True)
-    lon_nominal = models.FloatField(max_length=10, blank=True, null=True)
     lat_inmobiliaria = models.FloatField(max_length=10, blank=True, null=True)
     lon_inmobiliaria = models.FloatField(max_length=10, blank=True, null=True)
     lat_mandato = models.FloatField(max_length=10, blank=True, null=True)
@@ -36,30 +70,33 @@ class FormularioTX(models.Model):
     deslindes = models.CharField(max_length=100, null=True, blank=False)
     accesoSitio = models.TextField(null=True, blank=False, verbose_name='Acceso al Sitio' )
     accesoSitioConstruccion = models.TextField(null=True, blank=False, verbose_name='Acceso al Sitio para Construccion')
-    longitudAcceso = models.IntegerField(validators=[validar_longitud_sitio], null=True, blank=False, verbose_name='Longitud de Acceso')
-    longitudAccesoConstuccion = models.IntegerField(validators=[validar_longitud], null=True, blank=False, verbose_name='Longitud de Acceso para Construccion')
-    tipoSuelo = models.TextField(null=True, blank=False)
+    longitudAcceso = models.IntegerField(validators=[validar_longitud_sitio], null=True, blank=False, verbose_name='Longitud de Acceso (m)')
+    longitudAccesoConstuccion = models.IntegerField(validators=[validar_longitud], null=True, blank=False, verbose_name='ongitud de Acceso para Construccion (m)')
+    tipoSuelo = models.TextField(null=True, blank=False, verbose_name='Tipo de Suelo')
     obstaculos = models.TextField(default="Sin obstaculos")
     adicionales = models.TextField(default="Sin adicionales", verbose_name='Trabajos Adicionales')
-    proveedorEnergia = models.CharField(max_length=100, blank=True, null=True, verbose_name='Provvedor de Energía')
+    proveedorEnergia = models.CharField(max_length=100, blank=True, null=True, verbose_name='Proveedor de Energía')
     capacidadEnergia = models.CharField(max_length=20, blank=True, verbose_name='Capacidad de Energia' )
     
     lat_energia = models.FloatField(validators=[validar_latitud], blank=True, null=True, verbose_name='Latitud de Empalme')
     lon_energia = models.FloatField(validators=[validar_longitud], blank=True, null=True, verbose_name='Longitud de Empalme')
-    distanciaEmpalmeSitio = models.IntegerField(blank=True, null=True, verbose_name='Distancia entre Empalme y Sitio')
-    
-    lat_nominal = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Nominal')
-    lon_nominal = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Nominal')
+    distanciaEmpalmeSitio = models.IntegerField(blank=True, null=True, verbose_name='Distancia de Empalme a Sitio (m)')
     
     lat_inmobiliaria = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Inmobiliaria')
     lon_inmobiliaria = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Inmobiliaria')
     
-    dist_nominal_inmobiliaria = models.IntegerField(blank=True, null=True, verbose_name='Distancia Nominal a Inmobiliaria')
-    dist_nominal_inspeccion = models.IntegerField(blank=True, null=True, verbose_name='Distancia Nominal a Inspeccion')
-    dist_inmobiliaria_inspeccion = models.IntegerField(blank=True, null=True, verbose_name='Distancia Inmobiliaria a Inspeccio')
+    dist_inmobiliaria_inspeccion = models.IntegerField(blank=True, null=True, verbose_name='Distancia Inmobiliaria a Inspeccion (m)')
     
     comentario = models.TextField(default="Sin comentarios", null=True, blank=True)
     
+    imagen = models.ImageField(upload_to='imagenes_mapas/', null=True, blank=True)
+    
+    def imagen_deslindes(self):
+        # Obtén la instancia de Image
+        imagen_instance = Image.load()
+        if imagen_instance:
+            return imagen_instance.image.url
+        return None
     def __str__(self):
         return self.entel_id
 
@@ -80,15 +117,11 @@ class FormularioTX(models.Model):
             self.nombre = self.sitio.Nombre
             self.comuna = self.sitio.Comuna
             self.provincia = self.sitio.Provincia
-            self.lat_nominal = self.sitio.lat_nominal
-            self.lon_nominal = self.sitio.lon_nominal
             self.lat_inmobiliaria = self.sitio.lat_inmobiliaria
             self.lon_inmobiliaria = self.sitio.lon_inmobiliaria
             
             # Calcular las distancias usando geopy antes de guardar
             self.distanciaEmpalmeSitio = self.calcular_distancia_geopy(self.lat, self.lon, self.lat_energia, self.lon_energia)
-            self.dist_nominal_inmobiliaria = self.calcular_distancia_geopy(self.lat_nominal, self.lon_nominal, self.lat_inmobiliaria, self.lon_inmobiliaria)
-            self.dist_nominal_inspeccion = self.calcular_distancia_geopy(self.lat_nominal, self.lon_nominal, self.lat, self.lon)
             self.dist_inmobiliaria_inspeccion = self.calcular_distancia_geopy(self.lat_inmobiliaria, self.lon_inmobiliaria, self.lat, self.lon)
         super(FormularioTX, self).save(*args, **kwargs)
         
@@ -112,24 +145,34 @@ class FormularioPreIng(models.Model):
     deslindes = models.CharField(max_length=100, null=True, blank=False)
     accesoSitio = models.TextField(null=True, blank=False, verbose_name='Acceso al Sitio')
     accesoSitioConstruccion = models.TextField(null=True, blank=False, verbose_name='Acceso al Sitio para Construccion')
-    longitudAcceso = models.IntegerField(validators=[validar_longitud_sitio], null=True, blank=False, verbose_name='Longitud de Acceso')
-    longitudAccesoConstuccion = models.IntegerField(validators=[validar_longitud], null=True, blank=False, verbose_name='Longitud de Acceso para Construccion')
+    longitudAcceso = models.IntegerField(validators=[validar_longitud_sitio], null=True, blank=False, verbose_name='Longitud de Acceso (m)')
+    longitudAccesoConstuccion = models.IntegerField(validators=[validar_longitud], null=True, blank=False, verbose_name='Longitud de Acceso para Construccion (m)')
     tipoSuelo = models.TextField(null=True, blank=False, verbose_name='Tipo de Suelo')
     obstaculos = models.TextField(default="Sin obstaculos")
     adicionales = models.TextField(default="Sin adicionales", verbose_name='Trabajos Adicionales')
-    proveedorEnergia = models.CharField(max_length=100, blank=True, null=True, verbose_name='Provvedor de Energía')
+    proveedorEnergia = models.CharField(max_length=100, blank=True, null=True, verbose_name='Proveedor de Energía')
     capacidadEnergia = models.CharField(max_length=20, blank=True, verbose_name='Capacidad de Energia')
     
     lat_energia = models.FloatField(validators=[validar_latitud], blank=True, null=True, verbose_name='Latitud de Empalme')
     lon_energia = models.FloatField(validators=[validar_longitud], blank=True, null=True, verbose_name='Longitud de Empalme')
-    distanciaEmpalmeSitio = models.IntegerField(blank=True, null=True, verbose_name='Distancia de Empalme a Sitio')
+    distanciaEmpalmeSitio = models.IntegerField(blank=True, null=True, verbose_name='Distancia de Empalme a Sitio (m)')
     
-    lat_mandato = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Mandato')
-    lon_mandato = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Mandato')
+    lat_mandato = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Mandato/Inmobiliaria')
+    lon_mandato = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Mandato/Inmobiliaria')
     
-    dist_mandato_ingenieria = models.IntegerField(blank=True, null=True, verbose_name='Distancia de Mandato a Ingeniería')
+    dist_mandato_ingenieria = models.IntegerField(blank=True, null=True, verbose_name='Distancia Inspeccion Mandato/Inmobiliaria (m)')
     
     comentario = models.TextField(default="Sin comentarios", null=True, blank=True)
+    
+    imagen = models.ImageField(upload_to='imagenes_mapas/', null=True, blank=True)
+    
+    def imagen_deslindes(self):
+        # Obtén la instancia de Image
+        imagen_instance = Image.load()
+        if imagen_instance:
+            return imagen_instance.image.url
+        return None
+  
 
     def calcular_distancia_geopy(self, lat_1, lon_1, lat_2, lon_2):
         """Calcula la distancia entre dos puntos usando geopy."""
@@ -154,6 +197,14 @@ class FormularioPreIng(models.Model):
             # Calcular las distancias usando geopy antes de guardar
             self.distanciaEmpalmeSitio = self.calcular_distancia_geopy(self.lat, self.lon, self.lat_energia, self.lon_energia)
             self.dist_mandato_ingenieria = self.calcular_distancia_geopy(self.lat_mandato, self.lon_mandato, self.lat, self.lon)
+
+            if not self.imagen:  # Si no hay imagen ya asociada, obten una nueva
+                imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_mandato, self.lon_mandato)
+
+                if imagen_content:
+                    filename = f"mapa_{self.pk or 'nuevo'}.png"
+                    self.imagen.save(filename, ContentFile(imagen_content), save=False)
+
         super(FormularioPreIng, self).save(*args, **kwargs)
         
     def __str__(self):

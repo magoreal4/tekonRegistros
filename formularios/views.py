@@ -49,3 +49,4 @@ def formularioPreIng_view(request):
 def form_success(request):
     # Cambia '5' a la cantidad de segundos que desees antes de redirigir
     return render(request, 'formularios/success.html', {'redirect_time': 5})
+
