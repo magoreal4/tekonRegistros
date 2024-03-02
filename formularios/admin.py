@@ -207,7 +207,7 @@ class FormularioTXAdmin(ImportExportModelAdmin):
     lon_gms.short_description = "Longitud (GMS)"
 
     def lat_inmobiliaria_gms(self, obj):
-        return dec_to_gms(obj.lat_inmobiliaria, is_lat=False)
+        return dec_to_gms(obj.lat_inmobiliaria, is_lat=True)
     lat_inmobiliaria_gms.short_description = "Latitud (GMS)"
 
     def lon_inmobiliaria_gms(self, obj):
@@ -215,7 +215,7 @@ class FormularioTXAdmin(ImportExportModelAdmin):
     lon_inmobiliaria_gms.short_description = "Logitud (GMS)"
     
     def lat_energia_gms(self, obj):
-        return dec_to_gms(obj.lat_energia, is_lat=False)
+        return dec_to_gms(obj.lat_energia, is_lat=True)
     lat_energia_gms.short_description = "Latitud (GMS)"
     
     def lon_energia_gms(self, obj):
@@ -299,9 +299,6 @@ class FormularioPreIngResource(resources.ModelResource):
     dist_mandato_ingenieria = fields.Field(column_name='Distancia Inspeccion a Mandato/Inmobiliaria', attribute='dist_mandato_ingenieria')
 
     comentarios = fields.Field(column_name='Comentarios', attribute='comentario')
-
-
-
 
     class Meta:
         model = FormularioPreIng
@@ -392,7 +389,7 @@ class FormularioPreIngAdmin(ImportExportModelAdmin):
     lon_gms.short_description = "Longitud (GMS)"
 
     def lat_mandato_gms(self, obj):
-        return dec_to_gms(obj.lat_mandato, is_lat=False)
+        return dec_to_gms(obj.lat_mandato, is_lat=True)
     lat_mandato_gms.short_description = "Latitud (GMS)"
 
     def lon_mandato_gms(self, obj):
@@ -400,14 +397,12 @@ class FormularioPreIngAdmin(ImportExportModelAdmin):
     lon_mandato_gms.short_description = "Logitud (GMS)"
     
     def lat_energia_gms(self, obj):
-        return dec_to_gms(obj.lat_energia, is_lat=False)
+        return dec_to_gms(obj.lat_energia, is_lat=True)
     lat_energia_gms.short_description = "Latitud (GMS)"
     
     def lon_energia_gms(self, obj):
         return dec_to_gms(obj.lon_energia, is_lat=False)
     lon_energia_gms.short_description = "Logitud (GMS)"
-
-
 
         # Ajustando la disposición de los campos usando fieldsets
     fieldsets = (

@@ -7,19 +7,27 @@ from django.core.files.base import ContentFile
 from django.utils.html import format_html
 from main.models import Image
 
-def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, zoom=19, maptype="hybrid", scale=2, tamano="640x400"):
+def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, zoom=18, maptype="hybrid", scale=2, tamano="640x400"):
     base_url = "https://maps.googleapis.com/maps/api/staticmap?"
     api_key = "AIzaSyD22EmbDEXIc7Meum5e2MCYj4D0JpDrmpU"
 
-    # Omitir la etiqueta resulta en un punto sin letra dentro.
-    markers = [
-        f"size:mid|color:0x00FF00|label:M|{lat_mandato},{lon_mandato}",  # Primer marcador en verde usando hexadecimal
-        f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}", 
-    ]
-
+    # Verificar si lat_mandato y lon_mandato son válidos
+    if lat_mandato in [None, ""] or lon_mandato in [None, ""]:
+        # Si no son válidos, usar solo latitud y longitud para el centro y marcador
+        centro = f"{latitud},{longitud}"
+        markers = [f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}"]
+    else:
+        # Si son válidos, calcular promedio para el centro y usar ambos para marcadores
+        promedio_latitud = (latitud + lat_mandato) / 2
+        promedio_longitud = (longitud + lon_mandato) / 2
+        centro = f"{promedio_latitud},{promedio_longitud}"
+        markers = [
+            f"size:mid|color:0x00FF00|label:M|{lat_mandato},{lon_mandato}",
+            f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}",
+        ]
     # print(imagen_content)
     params = {
-        "center": f"{latitud},{longitud}",
+        "center": centro,
         "zoom": zoom,
         "size": tamano,
         "maptype": maptype,  # "roadmap" Agrega este parámetro para obtener imágenes satelitales
@@ -29,8 +37,6 @@ def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, zoom
     }
     
     response = requests.get(base_url, params=params)
-    print("-----------------------------------")
-    print(response)
     
     if response.status_code == 200:
 
@@ -123,6 +129,14 @@ class FormularioTX(models.Model):
             # Calcular las distancias usando geopy antes de guardar
             self.distanciaEmpalmeSitio = self.calcular_distancia_geopy(self.lat, self.lon, self.lat_energia, self.lon_energia)
             self.dist_inmobiliaria_inspeccion = self.calcular_distancia_geopy(self.lat_inmobiliaria, self.lon_inmobiliaria, self.lat, self.lon)
+            
+            if not self.imagen:  # Si no hay imagen ya asociada, obten una nueva
+                imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_inmobiliaria, self.lon_inmobiliaria)
+
+                if imagen_content:
+                    filename = f"mapa_{self.pk or 'nuevo'}.png"
+                    self.imagen.save(filename, ContentFile(imagen_content), save=False)
+
         super(FormularioTX, self).save(*args, **kwargs)
         
     def __str__(self):
