@@ -95,13 +95,13 @@ class FormularioTX(models.Model):
     lat_base = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Inmobiliaria/Mandato')
     lon_base = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Inmobiliaria/Mandato')
     
-    dist_base_inspeccion = models.IntegerField(blank=True, null=True, verbose_name='Distancia Inmobiliaria/Mandato a Inspeccion (m)')
+    dist_base_inspeccion = models.IntegerField(blank=True, null=True, verbose_name='Desfase de Ubicación (m)')
     
     comentario = models.TextField(default="Sin comentarios", null=True, blank=True)
     
     imagen = models.ImageField(upload_to='imagenes_mapas/', null=True, blank=True)
     
-    altura = models.CharField(max_length=100, blank=True, null=True)
+    altura = models.CharField(max_length=100, blank=True, null=True, verbose_name='Altura (m)')
     
     fecha_creacion = models.DateTimeField(default=timezone.now)
     
@@ -137,7 +137,10 @@ class FormularioTX(models.Model):
             self.dist_base_inspeccion = self.calcular_distancia_geopy(self.lat_base, self.lon_base, self.lat, self.lon)
             
             if not self.imagen:  # Si no hay imagen ya asociada, obten una nueva
-                imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_base, self.lon_base)
+                if self.dist_base_inspeccion>150:
+                    imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_base, self.lon_base,zoom=15)
+                else:
+                    imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_base, self.lon_base)
 
                 if imagen_content:
                     filename = f"mapa_{self.pk or 'nuevo'}.png"

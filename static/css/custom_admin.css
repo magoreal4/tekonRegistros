@@ -48,3 +48,25 @@ th {
   .grid-item p {
     text-align: center; /* centra el texto de la descripción */
   }
+
+  #id_dist_base_inspeccion {
+    color: red;
+    font-size: large;
+}	
+
+
+
+    @media (max-width: 767px) {
+        /* .aligned .form-row input, .aligned .form-row select, .aligned .form-row textarea {
+            flex: 1 1 auto;
+            max-width: 100%;
+        } */
+        #user-tools {
+            display: none;}
+        input {
+            width: 40%;
+        }	
+        
+    }
+
+ 

@@ -217,8 +217,8 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         if related_images.exists():
             html_content = ['<div class="grid-container">']
             for img in related_images:
-                image_html = f'<div class="grid-item"> <img src="{img.pic.url}" width="100%" height="auto" style="margin-right: 5px;"/>'
-                description_html = f'<p style="margin-right: 5px;">{img.descripcion}</p></div>' if img.descripcion else '</div>'
+                image_html = f'<div class="grid-item"> <img src="{img.pic.url}" width="100%" height="auto" style="text-align: center; display: flex; flex-direction: column; align-items: center;"/>'
+                description_html = f'<p style="margin-right: 60px;">{img.descripcion}</p></div>' if img.descripcion else '</div>'
                 html_content.append(image_html)
                 html_content.append(description_html) 
             html_content.append('</div>')
@@ -266,11 +266,11 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         ('Datos Geograficos', {  # Este es el título de la sección
             'fields': (
                 'imagen_thumb',
+                'dist_base_inspeccion',
                 ('lat','lat_gms'),
                 ('lon','lon_gms'),
                 ('lat_base', 'lat_base_gms'),
                 ('lon_base', 'lon_base_gms'),
-                'dist_base_inspeccion',
                 ('lat_energia', 'lat_energia_gms'),
                 ('lon_energia', 'lon_energia_gms'),
                 'distanciaEmpalmeSitio',

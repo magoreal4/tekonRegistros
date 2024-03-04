@@ -16,12 +16,12 @@ def formularioTX_view(request):
             # Ahora guarda la instancia del modelo en la base de datos
             instancia.save()
             # Si tu formulario tiene relaciones ManyToMany que necesiten guardarse, puedes hacerlo aquí:
-            # form.save_m2m()
             return redirect('formularios:success')  # Redirige a una nueva URL en caso de éxito
     else:
         form = FormularioTXForm()
         sitios_info = {sitio.id: sitio.Nombre for sitio in Sitio.objects.all()}
         return render(request, 'formularios/formularioTX.html', {'form': form, 'sitios_info': sitios_info})
+
 
 # Añade esta nueva vista
 def form_success(request):
