@@ -188,7 +188,7 @@ class FormularioTXAdmin(ImportExportModelAdmin):
     
     def imagen_thumb(self, obj):
         if obj.imagen:  # Reemplaza 'imagen' con el nombre real de tu campo de imagen en el modelo FormularioPreIng
-            return format_html('<img src="{}" width="480" height="300"/>', obj.imagen.url)
+            return format_html('<img src="{}" width="550" height=""/>', obj.imagen.url)
         return "No hay imagen"
     imagen_thumb.short_description = 'Vista Previa de la Imagen'
     
@@ -254,13 +254,9 @@ class FormularioTXAdmin(ImportExportModelAdmin):
     fieldsets = (
         ('Información General', {  # Ajusta los títulos y campos según necesites
             'fields': (
-                'etapa',
-                'sitio',
-                'entel_id', 
+                ('sitio','entel_id', 'etapa'), 
                 'nombre', 
-                'comuna', 
-                'provincia',
-                'altura', 
+                ('comuna','provincia', 'altura'), 
                 ),
         }),
         ('Datos Geograficos', {  # Este es el título de la sección

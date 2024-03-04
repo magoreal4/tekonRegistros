@@ -17,6 +17,7 @@ DEBUG = True
 INSTALLED_APPS = [
     # 'jazzmin',
     # 'grappelli',
+    "semantic_admin",
     "main",
     "formularios",
     "imagenes",

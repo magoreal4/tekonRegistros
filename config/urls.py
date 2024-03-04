@@ -8,13 +8,13 @@ urlpatterns = [
     path("", include('main.urls')),
     path("", include('formularios.urls')),
     path('', include('imagenes.urls')),
-    # path("__reload__/", include("django_browser_reload.urls")),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
 
 
 
 if settings.DEBUG:
-    # urlpatterns +=path("__reload__/", include("django_browser_reload.urls")),
+
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
