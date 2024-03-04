@@ -1,6 +1,6 @@
 from django import forms
 from .models import FormularioTX, Sitio, Image
-from multiupload.fields import MultiFileField
+
 
 class FormularioTXForm(forms.ModelForm):
     sitio = forms.ModelChoiceField(queryset=Sitio.objects.all(), empty_label="Seleccione un Sitio")
