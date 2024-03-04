@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     # 'grappelli',
     "main",
     "formularios",
+    "imagenes",
     
     "django.contrib.admin",
     "django.contrib.auth",

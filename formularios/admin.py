@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import FormularioTX, FormularioPreIng, Sitio, User
+from .models import FormularioTX, Sitio, User
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
 from django.utils.html import format_html
+from imagenes.models import Image
 
 
 def dec_to_gms(decimal_deg, is_lat=True):
@@ -32,13 +33,8 @@ class SitiosResource(resources.ModelResource):
     nombre = fields.Field(column_name='Nombre', attribute='Nombre')
     comuna = fields.Field(column_name='Comuna', attribute='Comuna')
     provincia = fields.Field(column_name='Provincia', attribute='Provincia')
-
-    lat_inmobiliaria = fields.Field(column_name='Lat Inmobiliaria', attribute='lat_inmobiliaria')
-    lon_inmobiliaria = fields.Field(column_name='Lon Inmobiliaria', attribute='lon_inmobiliaria')
-    lat_mandato = fields.Field(column_name='Lat Mandato', attribute='lat_mandato')
-    lon_mandato = fields.Field(column_name='Lon Mandato', attribute='lon_mandato')
-
-
+    altura = fields.Field(column_name='Altura', attribute='altura')
+    
     class Meta:
         model = Sitio
         fields = ()
@@ -48,10 +44,6 @@ class SitiosResource(resources.ModelResource):
             'nombre',
             'comuna',
             'provincia',
-            'lat_inmobiliaria',
-            'lon_inmobiliaria',
-            'lat_mandato',
-            'lon_mandato',
             'altura',
         )
         import_id_fields = ('entel_id',)
@@ -80,6 +72,7 @@ class SitioAdmin(ImportExportModelAdmin):
 
 
 class FormularioTXResource(resources.ModelResource):
+    etapa = fields.Field(column_name='Etapa', attribute='etapa')
     usuario = fields.Field(
         column_name='ITO',
         attribute='usuario',
@@ -109,12 +102,14 @@ class FormularioTXResource(resources.ModelResource):
     lonE = fields.Field(column_name='Longitud Empalme', attribute='lon_energia')
     dist_empalme_inspeccion = fields.Field(column_name='Distancia al Empalme', attribute='distanciaEmpalmeSitio')
 
-    lat_I = fields.Field(column_name='Latitud Inmobiliaria', attribute='lat_inmobiliaria')
-    lon_I = fields.Field(column_name='Longitud Inmobiliaria', attribute='lon_inmobiliaria')
+    lat_I = fields.Field(column_name='Latitud_base', attribute='lat_base')
+    lon_I = fields.Field(column_name='Longitud_base', attribute='lon_base')
 
-    dist_inmobiliaria_inspeccion = fields.Field(column_name='Distancia Inmobiliaria a Inspeccion', attribute='dist_inmobiliaria_inspeccion')
+    dist_base_inspeccion = fields.Field(column_name='Distancia Inmobiliaria/Mandato a Inspeccion', attribute='dist_base_inspeccion')
 
     comentarios = fields.Field(column_name='Comentarios', attribute='comentario')
+    
+    altura = fields.Field(column_name='Altura', attribute='altura')
     
     fecha_creacion = fields.Field(column_name='Fecha Creación', attribute='fecha_creacion')
 
@@ -122,6 +117,7 @@ class FormularioTXResource(resources.ModelResource):
         model = FormularioTX
         fields = ()
         export_order = (
+            'etapa',
             'sitio',
             'entel_id',
             'nombre',
@@ -147,7 +143,7 @@ class FormularioTXResource(resources.ModelResource):
             'dist_empalme_inspeccion',
             'lat_I',
             'lon_I',
-            'dist_inmobiliaria_inspeccion',
+            'dist_base_inspeccion',
             'comentarios',
             'fecha_creacion',
         )
@@ -160,20 +156,20 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         'sitio',
         'entel_id',
         'usuario',
-        'nombre',
-        'lat',
-        'lon',
-        'distanciaEmpalmeSitio',
-        'dist_inmobiliaria_inspeccion',
-        'imagen',
+        'etapa',
+        'dist_base_inspeccion_display',
+        'related_images_display_small', 
+    )
+    list_editable = (
+        'etapa',
     )
     
     readonly_fields = (
         'imagen_thumb', 
         'lat_gms', 
         'lon_gms',
-        'lat_inmobiliaria_gms',
-        'lon_inmobiliaria_gms',
+        'lat_base_gms',
+        'lon_base_gms',
         'lat_energia_gms',
         'lon_energia_gms',
         'imagen_deslindes_display',
@@ -181,8 +177,15 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         'nombre',
         'comuna',
         'provincia',
+        'related_images_display_small',
+        'related_images_display'
         )
 
+    def dist_base_inspeccion_display(self, obj):
+        # Aquí puedes retornar lo que originalmente se mostraría en "dist_base_inspeccion"
+        return obj.dist_base_inspeccion
+    dist_base_inspeccion_display.short_description = 'Desfase' 
+    
     def imagen_thumb(self, obj):
         if obj.imagen:  # Reemplaza 'imagen' con el nombre real de tu campo de imagen en el modelo FormularioPreIng
             return format_html('<img src="{}" width="480" height="300"/>', obj.imagen.url)
@@ -193,12 +196,35 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         if obj.imagen_deslindes():
             return format_html('<img src="{}" width="350" height="auto" />', obj.imagen_deslindes())
         return "No Image"
-    imagen_deslindes_display.short_description = 'Esquema 18/18/+50/+100'
+    imagen_deslindes_display.short_description = 'Esquema Ejemplo: 18/18/+50/+100'
 
     def get_readonly_fields(self, request, obj=None):
         # Aquí puedes añadir lógica adicional si necesitas
         return self.readonly_fields
 
+
+    def related_images_display_small(self, obj):
+        # Este método busca imágenes relacionadas en la otra aplicación
+        related_images = Image.objects.filter(etapa=obj.etapa, sitio=obj.sitio)
+        if related_images.exists():
+            return format_html(''.join([f'<img src="{img.pic.url}" width="50" height="auto" style="margin-right: 10px;"/>' for img in related_images]))
+        return "No hay imágenes relacionadas"
+    related_images_display_small.short_description = 'Imágenes Relacionadas'
+
+    def related_images_display(self, obj):
+        # Este método busca imágenes relacionadas en la otra aplicación
+        related_images = Image.objects.filter(etapa=obj.etapa, sitio=obj.sitio)
+        if related_images.exists():
+            html_content = ['<div class="grid-container">']
+            for img in related_images:
+                image_html = f'<div class="grid-item"> <img src="{img.pic.url}" width="100%" height="auto" style="margin-right: 5px;"/>'
+                description_html = f'<p style="margin-right: 5px;">{img.descripcion}</p></div>' if img.descripcion else '</div>'
+                html_content.append(image_html)
+                html_content.append(description_html) 
+            html_content.append('</div>')
+            return format_html(''.join(html_content))
+        return "No hay imágenes relacionadas"
+    related_images_display.short_description = 'Imágenes Relacionadas'
 
     def lat_gms(self, obj):
         return dec_to_gms(obj.lat, is_lat=True)
@@ -208,13 +234,13 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         return dec_to_gms(obj.lon, is_lat=False)
     lon_gms.short_description = "Longitud (GMS)"
 
-    def lat_inmobiliaria_gms(self, obj):
-        return dec_to_gms(obj.lat_inmobiliaria, is_lat=True)
-    lat_inmobiliaria_gms.short_description = "Latitud (GMS)"
+    def lat_base_gms(self, obj):
+        return dec_to_gms(obj.lat_base, is_lat=True)
+    lat_base_gms.short_description = "Latitud (GMS)"
 
-    def lon_inmobiliaria_gms(self, obj):
-        return dec_to_gms(obj.lon_inmobiliaria, is_lat=False)
-    lon_inmobiliaria_gms.short_description = "Logitud (GMS)"
+    def lon_base_gms(self, obj):
+        return dec_to_gms(obj.lon_base, is_lat=False)
+    lon_base_gms.short_description = "Logitud (GMS)"
     
     def lat_energia_gms(self, obj):
         return dec_to_gms(obj.lat_energia, is_lat=True)
@@ -228,6 +254,7 @@ class FormularioTXAdmin(ImportExportModelAdmin):
     fieldsets = (
         ('Información General', {  # Ajusta los títulos y campos según necesites
             'fields': (
+                'etapa',
                 'sitio',
                 'entel_id', 
                 'nombre', 
@@ -241,15 +268,15 @@ class FormularioTXAdmin(ImportExportModelAdmin):
                 'imagen_thumb',
                 ('lat','lat_gms'),
                 ('lon','lon_gms'),
-                ('lat_inmobiliaria', 'lat_inmobiliaria_gms'),
-                ('lon_inmobiliaria', 'lon_inmobiliaria_gms'),
-                'dist_inmobiliaria_inspeccion',
+                ('lat_base', 'lat_base_gms'),
+                ('lon_base', 'lon_base_gms'),
+                'dist_base_inspeccion',
                 ('lat_energia', 'lat_energia_gms'),
                 ('lon_energia', 'lon_energia_gms'),
                 'distanciaEmpalmeSitio',
                 'comentario'
                 ),
-            'description': 'Coord.Inmobiliaria "M", Coord. Inspeccion "I"',
+            'description': 'Coord Mandato/Inmobiliaria "M", Coord. Inspeccion "I"',
         }),
 
         ('Datos Constructivos', {  # Este es el título de la sección
@@ -265,215 +292,23 @@ class FormularioTXAdmin(ImportExportModelAdmin):
                 'obstaculos',
                 'adicionales',
                 'proveedorEnergia',
-                'imagen'
                 ),
         }),
+        ('Reporte fotografico', {  # Este es el título de la sección
+            'fields': (
+                'related_images_display',
+                ),
+        }),
+
+
         ('Registro', {  # Este es el título de la sección
             'fields': (
                 'fecha_creacion',
-                'usuario', 
+                'usuario',
+                'imagen' 
                 ),
         }),
 
     )
 
 
-class FormularioPreIngResource(resources.ModelResource):
-    usuario = fields.Field(
-        column_name='ITO',
-        attribute='usuario',
-        widget=ForeignKeyWidget(User, 'username'))
-    sitio = fields.Field(
-        column_name='PTI Cell ID',
-        attribute='sitio',
-        widget=ForeignKeyWidget(Sitio, 'PTICellID'))
-    entel_id = fields.Field(column_name='ID Entel', attribute='entel_id')
-    nombre = fields.Field(column_name='Nombre', attribute='nombre')
-    comuna = fields.Field(column_name='Comuna', attribute='comuna')
-    provincia = fields.Field(column_name='Provincia', attribute='provincia')
-    dim = fields.Field(column_name='Dimensiones', attribute='dimensiones')
-    des = fields.Field(column_name='Deslindes', attribute='deslindes')
-    aSitio = fields.Field(column_name='Acceso al Sitio', attribute='accesoSitio')
-    aSitioCons = fields.Field(column_name='Acceso para Construcción', attribute='accesoSitioConstruccion')
-    lAcceso = fields.Field(column_name='Longitud Acceso', attribute='longitudAcceso')
-    lAccesoCons = fields.Field(column_name='Longitud Acceso Construcción', attribute='longitudAccesoConstuccion')
-    tSuelo = fields.Field(column_name='Tipo de Suelo', attribute='tipoSuelo')
-    obst = fields.Field(column_name='Obstáculos', attribute='obstaculos')
-    adi = fields.Field(column_name='Adicionales', attribute='adicionales')
-    pEnergia = fields.Field(column_name='Proveedor de Energía', attribute='proveedorEnergia')
-    cEnergia = fields.Field(column_name='Capacidad de Energía', attribute='capacidadEnergia')
-    lat = fields.Field(column_name='Latitud', attribute='lat')
-    lon = fields.Field(column_name='Longitud', attribute='lon')
-    latE = fields.Field(column_name='Latitud Empalme', attribute='lat_energia')
-    lonE = fields.Field(column_name='Longitud Empalme', attribute='lon_energia')
-    dist_empalme_inspeccion = fields.Field(column_name='Distancia al Empalme', attribute='distanciaEmpalmeSitio')
-
-    lat_M = fields.Field(column_name='Latitud Mandato/Inmobiliaria', attribute='lat_mandato')
-    lon_M = fields.Field(column_name='Longitud Mandato/Inmobiliaria', attribute='lon_mandato')
-
-    dist_mandato_ingenieria = fields.Field(column_name='Distancia Inspeccion a Mandato/Inmobiliaria', attribute='dist_mandato_ingenieria')
-
-    comentarios = fields.Field(column_name='Comentarios', attribute='comentario')
-
-   
-    fecha_creacion = fields.Field(column_name='Fecha Creación', attribute='fecha_creacion')
-
-    class Meta:
-        model = FormularioPreIng
-        fields = ()
-
-        export_order = (
-            'sitio',
-            'entel_id',
-            'nombre',
-            'comuna',
-            'provincia',
-            'usuario',
-            'altura',
-            'dim',
-            'des',
-            'aSitio',
-            'aSitioCons',
-            'lAcceso',
-            'lAccesoCons',
-            'tSuelo',
-            'obst',
-            'adi',
-            'pEnergia',
-            'cEnergia',
-            'lat',
-            'lon',
-            'latE',
-            'lonE',
-            'dist_empalme_inspeccion',
-            'lat_M',
-            'lon_M',
-            'dist_mandato_ingenieria',
-            'comentarios',
-            'fecha_creacion',
-        )
-        import_id_fields = ('entel_id',)
-
-@admin.register(FormularioPreIng)
-class FormularioPreIngAdmin(ImportExportModelAdmin):
-    resource_class = FormularioPreIngResource
-    list_display = (
-        'sitio',
-        'entel_id',
-        'usuario',
-        'nombre',
-        'lat',
-        'lon',
-        'distanciaEmpalmeSitio',
-        'dist_mandato_ingenieria',
-        'imagen',
-    )
-
-    readonly_fields = (
-        'imagen_thumb', 
-        'lat_gms', 
-        'lon_gms',
-        'lat_mandato_gms',
-        'lon_mandato_gms',
-        'lat_energia_gms',
-        'lon_energia_gms',
-        'imagen_deslindes_display',
-        'entel_id',
-        'nombre',
-        'comuna',
-        'provincia',
-        
-        )
-
-    def imagen_thumb(self, obj):
-        if obj.imagen:  # Reemplaza 'imagen' con el nombre real de tu campo de imagen en el modelo FormularioPreIng
-            return format_html('<img src="{}" width="480" height="300"/>', obj.imagen.url)
-        return "No hay imagen"
-    imagen_thumb.short_description = 'Vista Previa de la Imagen'
-    
-    def imagen_deslindes_display(self, obj):
-        if obj.imagen_deslindes():
-            return format_html('<img src="{}" width="350" height="auto" />', obj.imagen_deslindes())
-        return "No Image"
-    imagen_deslindes_display.short_description = 'Esquema 18/18/+50/+100'
-
-    def get_readonly_fields(self, request, obj=None):
-        # Aquí puedes añadir lógica adicional si necesitas
-        return self.readonly_fields
-
-
-    def lat_gms(self, obj):
-        return dec_to_gms(obj.lat, is_lat=True)
-    lat_gms.short_description = "Latitud (GMS)"
-
-    def lon_gms(self, obj):
-        return dec_to_gms(obj.lon, is_lat=False)
-    lon_gms.short_description = "Longitud (GMS)"
-
-    def lat_mandato_gms(self, obj):
-        return dec_to_gms(obj.lat_mandato, is_lat=True)
-    lat_mandato_gms.short_description = "Latitud (GMS)"
-
-    def lon_mandato_gms(self, obj):
-        return dec_to_gms(obj.lon_mandato, is_lat=False)
-    lon_mandato_gms.short_description = "Logitud (GMS)"
-    
-    def lat_energia_gms(self, obj):
-        return dec_to_gms(obj.lat_energia, is_lat=True)
-    lat_energia_gms.short_description = "Latitud (GMS)"
-    
-    def lon_energia_gms(self, obj):
-        return dec_to_gms(obj.lon_energia, is_lat=False)
-    lon_energia_gms.short_description = "Logitud (GMS)"
-
-        # Ajustando la disposición de los campos usando fieldsets
-    fieldsets = (
-        ('Información General', {  # Ajusta los títulos y campos según necesites
-             'fields': (
-                'sitio',
-                'entel_id', 
-                'nombre', 
-                'comuna', 
-                'provincia',
-                'altura', 
-                ),        }),
-        ('Datos Geograficos', {  # Este es el título de la sección
-            'fields': (
-                'imagen_thumb',
-                ('lat','lat_gms'),
-                ('lon','lon_gms'),
-                ('lat_mandato', 'lat_mandato_gms'),
-                ('lon_mandato', 'lon_mandato_gms'),
-                'dist_mandato_ingenieria',
-                ('lat_energia', 'lat_energia_gms'),
-                ('lon_energia', 'lon_energia_gms'),
-                'distanciaEmpalmeSitio',
-                'comentario'
-                ),
-            'description': 'Coord. Mandato/Inmobiliaria "M", Coord. Inspeccion "I"',
-        }),
-
-        ('Datos Constructivos', {  # Este es el título de la sección
-            'fields': (
-                'dimensiones',
-                'imagen_deslindes_display',
-                'deslindes',
-                'accesoSitio',
-                'accesoSitioConstruccion',
-                'longitudAcceso',
-                'longitudAccesoConstuccion',
-                'tipoSuelo',
-                'obstaculos',
-                'adicionales',
-                'proveedorEnergia',
-                'imagen'
-                ),
-        }),
-        ('Registro', {  # Este es el título de la sección
-            'fields': (
-                'fecha_creacion',
-                'usuario', 
-                ),
-        }),
-
-    )

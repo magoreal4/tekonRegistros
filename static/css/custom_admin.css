@@ -33,3 +33,18 @@ th {
 .field-box {
     padding: 2px 0px !important; /* Ajustar el relleno */
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* crea dos columnas de igual ancho */
+    gap: 20px; /* espacio entre los elementos del grid */
+  }
+  
+  .grid-item img {
+    width: 75%; /* hace que las imágenes se expandan para llenar su contenedor */
+    height: auto; /* mantiene la proporción de aspecto de las imágenes */
+  }
+  
+  .grid-item p {
+    text-align: center; /* centra el texto de la descripción */
+  }

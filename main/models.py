@@ -28,3 +28,7 @@ class Image(SingletonModel):
             # Si no existe, se puede crear uno nuevo y retornarlo
             # O simplemente retornar None o lanzar un error según la lógica deseada
             return None
+
+    class Meta:
+        verbose_name = "Imagen Deslindes"
+        verbose_name_plural = "Imagen Deslindes"

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Subir Fotografías</title>
+</head>
+<body>
+
+<h2>Subir Fotografías</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Subir Imágenes</button>
+</form>
+
+</body>
+</html>

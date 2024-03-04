@@ -20,8 +20,7 @@
     <div class="mt-8 flex flex-col items-center justify-between h-full">
         <!-- Redirect Button -->
         <a href="{% url 'formularios:formularioTX' %}" role="button" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Registro Inspección TX</a>
-        <a href="{% url 'formularios:formularioPreIngenieria' %}" role="button" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Registro Inspección Pre-ingenieria
-        </a>
+        
         <!-- Conditionally display logout or login based on authentication status -->
         {% if user.is_authenticated %}
             <a href="{% url 'logout' %}" role="button" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</a>

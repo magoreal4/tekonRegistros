@@ -2,7 +2,7 @@
 
 {% load static tailwind_filters crispy_forms_tags widget_tweaks %}
 
-{% block title %}TX{% endblock title %}
+{% block title %}TX/Pre-Ing{% endblock title %}
 
 {% block extra_css %}
     {% comment %} <script src="{% static './js/Leaflet.AccuratePosition.js' %}"></script>  {% endcomment %}
@@ -26,11 +26,18 @@
 
 <div class="container mx-auto p-4 bg-red-100">
     <img src="{% static 'img/logo.png' %}" alt="Logotipo" class="h-6 my-2">
-    <h2 class="text-center text-xl font-bold flex-grow">Registro de Inspección TX / TSS
+    <h2 class="text-center text-xl font-bold flex-grow">Registro Inspección TX-TSS / Pre-Ingenieria
     </h2>
 
     <form method="post" class="">
         {% csrf_token %}
+        <div class="form-group">
+            {{ form.etapa.label_tag }}
+            {{ form.etapa|add_class:"formulario-input" }}
+            {% if form.etapa.help_text %}
+                <small class="form-text text-muted">{{ form.etapa.help_text }}</small>
+            {% endif %}
+        </div>
         <div class="form-group">
             {{ form.sitio.label_tag }}
             {{ form.sitio|add_class:"formulario-input" }}
@@ -39,6 +46,13 @@
             {% endif %}
         </div>
         <div id="info-adicional-sitio">Información del sitio aparecerá aquí...</div>
+        <div class="form-group">
+            {{ form.altura.label_tag }}
+            {{ form.altura|add_class:"formulario-input" }}
+            {% if form.etapa.help_text %}
+                <small class="form-text text-muted">{{ form.altura.help_text }}</small>
+            {% endif %}
+        </div>
         <div class="text-left mt-4">
             <button id="ubicar-btn" type="button" class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 transition-colors">
                 📍 Ubicar Centro Torre/Poste
