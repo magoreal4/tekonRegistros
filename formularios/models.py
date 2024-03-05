@@ -51,7 +51,10 @@ class Sitio(models.Model):
     Nombre = models.CharField(max_length=100, blank=True)
     Comuna = models.CharField(max_length=20, blank=True)
     Provincia = models.CharField(max_length=50, blank=True)
-    altura = models.IntegerField(blank=True, null=True)
+    altura = models.CharField(max_length=100, blank=True, null=True)
+    lat_base = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Inmobiliaria/Mandato')
+    lon_base = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Inmobiliaria/Mandato')
+
 
     def __str__(self):
         return self.PTICellID
@@ -132,6 +135,17 @@ class FormularioTX(models.Model):
             self.comuna = self.sitio.Comuna
             self.provincia = self.sitio.Provincia
             
+            if self.sitio.altura is not None and self.lat_base != '':
+                self.altura = self.sitio.altura
+            
+            if self.sitio.lat_base is not None and self.lat_base != '':
+                self.lat_base = self.sitio.lat_base
+                self.lon_base = self.sitio.lon_base
+            else:
+                self.sitio.lat_base = self.lat
+                self.sitio.lon_base = self.lon
+                self.sitio.save()
+                
             # Calcular las distancias usando geopy antes de guardar
             self.distanciaEmpalmeSitio = self.calcular_distancia_geopy(self.lat, self.lon, self.lat_energia, self.lon_energia)
             self.dist_base_inspeccion = self.calcular_distancia_geopy(self.lat_base, self.lon_base, self.lat, self.lon) or 0

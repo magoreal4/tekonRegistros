@@ -45,6 +45,8 @@ class SitiosResource(resources.ModelResource):
             'comuna',
             'provincia',
             'altura',
+            'lat_base',
+            'lon_base',
         )
         import_id_fields = ('entel_id',)
 
@@ -56,10 +58,10 @@ class SitioAdmin(ImportExportModelAdmin):
         'EntelID',
         'nombre_modificado',
         'altura',
+        'lat_nombre',
+        'lon_nombre',
     )
-    list_editable = (
-        'altura',
-    )
+
     def nombre_modificado(self, obj):
         """
         Método para modificar el valor de 'Nombre', mostrando solo la parte después del '-'.
@@ -67,9 +69,17 @@ class SitioAdmin(ImportExportModelAdmin):
         # Dividir el nombre por '-' y tomar el último elemento
         partes = obj.Nombre.split('-')
         return partes[-1] if partes else obj.Nombre
-
     nombre_modificado.short_description = 'Nombre'
+    
+    def lat_nombre(self, obj):
+        return obj.lat_base
+    lat_nombre.short_description = 'Latitud Base'
+    
+    def lon_nombre(self, obj):
+        return obj.lon_base
+    lon_nombre.short_description = 'Longitud Base'
 
+    
 
 class FormularioTXResource(resources.ModelResource):
     etapa = fields.Field(column_name='Etapa', attribute='etapa')
