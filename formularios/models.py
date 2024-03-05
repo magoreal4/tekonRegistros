@@ -134,7 +134,7 @@ class FormularioTX(models.Model):
             
             # Calcular las distancias usando geopy antes de guardar
             self.distanciaEmpalmeSitio = self.calcular_distancia_geopy(self.lat, self.lon, self.lat_energia, self.lon_energia)
-            self.dist_base_inspeccion = self.calcular_distancia_geopy(self.lat_base, self.lon_base, self.lat, self.lon)
+            self.dist_base_inspeccion = self.calcular_distancia_geopy(self.lat_base, self.lon_base, self.lat, self.lon) or 0
             
             if not self.imagen:  # Si no hay imagen ya asociada, obten una nueva
                 if self.dist_base_inspeccion>150:
