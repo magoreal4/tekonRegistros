@@ -27,7 +27,7 @@ styleSheet.type = "text/css";
 if (distancia < 10) {
     var styleText = `
     #id_dist_base_inspeccion {
-        background-color: green !important; /* Cambia el color según necesites */
+        background-color: #90EE90 !important; /* Cambia el color según necesites */
     }`;
 } else if (distancia>10 && distancia <=30 ) {
     var styleText = `
@@ -50,5 +50,36 @@ if (styleSheet.styleSheet) {
 
 // Añade la hoja de estilos al documento
 document.head.appendChild(styleSheet);
+
+
+
+
+
+var descriptionDiv = document.querySelector('#formulariotx_form > div > div:nth-child(1) > div:nth-child(2) > div.description');
+    // Reemplaza las frases específicas con versiones envueltas en span
+    if (descriptionDiv) {
+        // Obtén el contenido actual del elemento
+        var content = descriptionDiv.innerHTML;
+        
+        // Reemplaza las frases específicas con versiones envueltas en span
+        content = content.replace(/Mandato\/Inmobiliaria "M"/g, '<span class="mandato">Mandato/Inmobiliaria "M"</span>');
+        content = content.replace(/Inspeccion "I"/g, '<span class="inspeccion">Inspeccion "I"</span>');
+        content = content.replace(/Empalme/g, '<span class="empalme">Empalme</span>');
+        
+        // Asigna el contenido modificado de vuelta al elemento 'description'
+        descriptionDiv.innerHTML = content;
+        document.querySelectorAll('.mandato').forEach(function(el) {
+            el.style.backgroundColor = '#90EE90'; // Verde claro
+          });
+        
+          document.querySelectorAll('.inspeccion').forEach(function(el) {
+            el.style.backgroundColor = '#FFFF00'; // Amarillo
+          });
+        
+          document.querySelectorAll('.empalme').forEach(function(el) {
+            el.style.backgroundColor = '#00FFFF'; // Cyan
+          });
+      }
+
 </script>
 {% endblock %}

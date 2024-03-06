@@ -70,8 +70,7 @@
         margin-right: 540px !important;
     }
 
-
-        
+      
     .field-lat_gms > div,
     .field-lon_gms > div,
     .field-lat_base_gms > div,
@@ -83,4 +82,6 @@
         width: 150px; 
     }
 
-      
+    .field-lat_base, .field-lat_base_gms {
+        margin-top: 35px !important;
+    }

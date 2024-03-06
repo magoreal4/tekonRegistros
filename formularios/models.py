@@ -6,24 +6,34 @@ import requests
 from django.core.files.base import ContentFile
 from main.models import Image
 from django.utils import timezone
+from django.templatetags.static import static
 
-def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, zoom=18, maptype="hybrid", scale=2, tamano="640x400"):
+def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, lat_energia, lon_energia, zoom=18, maptype="hybrid", scale=2, tamano="640x400"):
     base_url = "https://maps.googleapis.com/maps/api/staticmap?"
     api_key = "AIzaSyD22EmbDEXIc7Meum5e2MCYj4D0JpDrmpU"
 
+
     # Verificar si lat_mandato y lon_mandato son válidos
     if lat_mandato in [None, ""] or lon_mandato in [None, ""]:
-        # Si no son válidos, usar solo latitud y longitud para el centro y marcador
         centro = f"{latitud},{longitud}"
-        markers = [f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}"]
+        if lat_energia in [None, ""] or lon_energia in [None, ""]:
+            markers = [
+                f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}",
+                ]
+        else:
+            markers = [
+                f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}",
+                f"size:tiny|color:0x00FFFF|{lat_energia},{lon_energia}",
+            ]
     else:
-        # Si son válidos, calcular promedio para el centro y usar ambos para marcadores
-        promedio_latitud = (latitud + lat_mandato) / 2
-        promedio_longitud = (longitud + lon_mandato) / 2
+        # Si son válidos, calcular promedio para el centro y usar ambos para marcadores¡
+        promedio_latitud = (latitud + lat_mandato + lat_energia) / 3
+        promedio_longitud = (longitud + lon_mandato + lon_energia) / 3
         centro = f"{promedio_latitud},{promedio_longitud}"
         markers = [
-            f"size:mid|color:0x00FF00|label:M|{lat_mandato},{lon_mandato}",
+            f"size:normal|color:0x00FF00|label:M|{lat_mandato},{lon_mandato}",
             f"size:mid|color:0xFFFF00|label:I|{latitud},{longitud}",
+            f"size:tiny|color:0x00FFFF|{lat_energia},{lon_energia}",
         ]
     # print(imagen_content)
     params = {
@@ -153,9 +163,9 @@ class FormularioTX(models.Model):
             
             if not self.imagen:  # Si no hay imagen ya asociada, obten una nueva
                 if self.dist_base_inspeccion>150:
-                    imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_base, self.lon_base,zoom=15)
+                    imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_base, self.lon_base, self.lat_energia, self.lon_energia, zoom=15)
                 else:
-                    imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_base, self.lon_base)
+                    imagen_content = obtener_imagen_google_maps(self.lat, self.lon, self.lat_base, self.lon_base, self.lat_energia, self.lon_energia)
 
                 if imagen_content:
                     filename = f"mapa_{self.pk or 'nuevo'}.png"
