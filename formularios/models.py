@@ -27,8 +27,8 @@ def obtener_imagen_google_maps(latitud, longitud, lat_mandato, lon_mandato, lat_
             ]
     else:
         # Si son válidos, calcular promedio para el centro y usar ambos para marcadores¡
-        promedio_latitud = (latitud + lat_mandato + lat_energia) / 3
-        promedio_longitud = (longitud + lon_mandato + lon_energia) / 3
+        promedio_latitud = (latitud + lat_mandato) / 2
+        promedio_longitud = (longitud + lon_mandato) / 2
         centro = f"{promedio_latitud},{promedio_longitud}"
         markers = [
             f"size:normal|color:0x00FF00|label:M|{lat_mandato},{lon_mandato}",
