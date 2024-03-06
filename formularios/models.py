@@ -145,16 +145,13 @@ class FormularioTX(models.Model):
             self.comuna = self.sitio.Comuna
             self.provincia = self.sitio.Provincia
             
-            if self.sitio.altura is not None and self.lat_base != '':
-                self.altura = self.sitio.altura
-            
-            if self.sitio.lat_base is not None and self.lat_base != '':
+            if self.sitio.lat_base is not None and self.sitio.lon_base is not None:
                 self.lat_base = self.sitio.lat_base
                 self.lon_base = self.sitio.lon_base
+            
             else:
-                self.sitio.altura = self.altura
-                self.sitio.lat_base = self.lat
-                self.sitio.lon_base = self.lon
+                self.sitio.lat_base = self.lat_base
+                self.sitio.lon_base = self.lon_base
                 self.sitio.save()
                 
             # Calcular las distancias usando geopy antes de guardar
