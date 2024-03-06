@@ -1,0 +1,18 @@
+@media print {
+    body, h1, p {
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+        background-color: #fff !important; /* Asegura un fondo blanco o cualquier color que prefieras */
+        color: #000 !important; /* Asegura texto negro para mejorar la legibilidad */
+      }
+    .related-widget-wrapper, .datetimeshortcuts, .field-imagen {
+      display: none;
+    }
+    
+    /* .field-lat_gms > div {
+        border: 2px solid #000000; 
+    } */
+
+
+  }
+  

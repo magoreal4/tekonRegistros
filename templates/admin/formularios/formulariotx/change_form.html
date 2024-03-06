@@ -1,15 +1,54 @@
 {% extends "admin/change_form.html" %}
+{% load static %}
 
 {% block extrahead %}
     {{ block.super }}
     <!-- Aquí puedes incluir CSS o JS adicional -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estilos_impresion.css' %}" media="print"/>
 {% endblock %}
 
 {% block object-tools-items %}
 
 {% endblock %}
 
-
 {% block content %}
 {{ block.super }}
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script> 
+
+var distancia = parseInt(document.querySelector("#id_dist_base_inspeccion").value)
+// Crea una nueva hoja de estilos si no existe, o selecciona una existente
+var styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+// Asegura que este estilo solo se aplique para impresión
+if (distancia < 10) {
+    var styleText = `
+    #id_dist_base_inspeccion {
+        background-color: green !important; /* Cambia el color según necesites */
+    }`;
+} else if (distancia>10 && distancia <=30 ) {
+    var styleText = `
+    #id_dist_base_inspeccion {
+        background-color: yellow !important; /* Cambia el color según necesites */
+    }`;
+} else if(distancia>30) {
+    var styleText = `
+    #id_dist_base_inspeccion {
+        background-color: #FF6666 !important; /* Cambia el color según necesites */
+    }`;
+}
+
+// Añade la regla CSS a la hoja de estilos
+if (styleSheet.styleSheet) {
+    styleSheet.styleSheet.cssText = styleText; // Para IE
+} else {
+    styleSheet.appendChild(document.createTextNode(styleText)); // Para otros navegadores
+}
+
+// Añade la hoja de estilos al documento
+document.head.appendChild(styleSheet);
+</script>
 {% endblock %}

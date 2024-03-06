@@ -264,6 +264,7 @@ class FormularioTXAdmin(ImportExportModelAdmin):
     fieldsets = (
         ('Información General', {  # Ajusta los títulos y campos según necesites
             'fields': (
+                'dist_base_inspeccion',
                 ('sitio','entel_id', 'etapa'), 
                 'nombre', 
                 ('comuna','provincia', 'altura'), 
@@ -272,7 +273,6 @@ class FormularioTXAdmin(ImportExportModelAdmin):
         ('Datos Geograficos', {  # Este es el título de la sección
             'fields': (
                 'imagen_thumb',
-                'dist_base_inspeccion',
                 ('lat','lat_gms'),
                 ('lon','lon_gms'),
                 ('lat_base', 'lat_base_gms'),

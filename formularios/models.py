@@ -84,7 +84,7 @@ class FormularioTX(models.Model):
     accesoSitio = models.TextField(null=True, blank=False, verbose_name='Acceso al Sitio' )
     accesoSitioConstruccion = models.TextField(null=True, blank=False, verbose_name='Acceso al Sitio para Construccion')
     longitudAcceso = models.IntegerField(validators=[validar_longitud_sitio], null=True, blank=False, verbose_name='Longitud Acceso (m)')
-    longitudAccesoConstuccion = models.IntegerField(validators=[validar_longitud_sitio], null=True, blank=False, verbose_name='ongitud Acceso Construccion (m)')
+    longitudAccesoConstuccion = models.IntegerField(validators=[validar_longitud_sitio], null=True, blank=False, verbose_name='Longitud Acceso Construccion (m)')
     tipoSuelo = models.TextField(null=True, blank=False, verbose_name='Tipo de Suelo')
     obstaculos = models.TextField(default="Sin obstaculos")
     adicionales = models.TextField(default="Sin adicionales", verbose_name='Trabajos Adicionales')
@@ -98,7 +98,7 @@ class FormularioTX(models.Model):
     lat_base = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Latitud Inmobiliaria/Mandato')
     lon_base = models.FloatField(max_length=10, blank=True, null=True, verbose_name='Longitud Inmobiliaria/Mandato')
     
-    dist_base_inspeccion = models.IntegerField(blank=True, null=True, verbose_name='Desfase de Ubicación (m)')
+    dist_base_inspeccion = models.IntegerField(blank=True, null=True, verbose_name='Desfase (m)')
     
     comentario = models.TextField(default="Sin comentarios", null=True, blank=True)
     
